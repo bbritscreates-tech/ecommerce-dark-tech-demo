@@ -1,0 +1,149 @@
+/* BASE STYLES */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Rajdhani', 'Inter', sans-serif;
+}
+
+header {
+    width: 100%;
+}
+
+.navbar-1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 8px 20px;
+    background-color: #1a1a1a;
+}
+
+.nav-logo img {
+    width: 150px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgb(107 114 128);
+  border-radius: 30px;
+  overflow: hidden;
+  background: #2a2a2a;
+  width: 350px;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  padding: 8px 12px;
+  flex: 1;
+  background: transparent;
+  color: #fff;
+}
+
+.search-bar button {
+  background: #7b00ff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.search-bar button:hover {
+  background: #9b5fff;
+}
+
+/* Hover and focus state (input or form) */
+.search-bar:hover,
+.search-bar:focus-within {
+  border-color: #7b00ff; /* Purple glow border */
+  box-shadow: 0 0 8px #7b00ff;
+}
+
+.account-cart a {
+    text-decoration: none;
+    color: #fff;
+    padding: 0 15px;
+}
+
+.account-cart a:hover {
+    color: #9b5fff;
+}
+
+.account-cart .border-right {
+    border-right: 1px solid rgb(107 114 128);
+}
+
+.cart-count {
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.navbar-section {
+    background-color: #3a3a3a;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #fff;
+    padding: 8px 11px;
+    font-size: 15px;
+    background-color: #7b00ff;
+    border-radius: 20px;
+    border: 1px solid rgb(107 114 128);
+}
+
+.menu-toggle .menu-label {
+    display: none;
+    margin-left: 8px;
+    color: #fff;
+}
+
+.nav-links {
+    display: none;
+    flex-direction: column;
+    background: ;
+    position: absolute;
+    top: ;
+    right: ;
+    width: ;
+    box-shadow: ;
+    z-index: 100;
+}
+
+.nav-links.active {
+    display: flex;
+}
+
+.nav-links ul {
+  list-style: none;
+  flex-direction: column;
+}
+
+.nav-links li a {
+  display: block;
+  padding: 12px 20px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links li a:hover {
+  background: #444;
+}
+
+/* Mobile bottom nav */
+.mobile-bottom-nav {
+    display: none;
+}
