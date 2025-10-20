@@ -1,159 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="description"
-      content="SpectraRig — your ultimate destination for gaming gear, laptops, monitors, chairs, and accessories. Power up your setup with premium tech built for performance."
-    />
-    <meta
-      name="keywords"
-      content="gaming, tech, laptops, monitors, chairs, accessories, setups, SpectraRig, online store, gaming equipment"
-    />
-    <meta name="author" content="Bernadette Brits" />
-    <title>SpectraRig | Home</title>
-    <link rel="stylesheet" href="style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-  </head>
-
-  <body>
-    <header>
-      <div>
-        <a href="index.html"
-          ><img
-            src="images/logo/spectarig_logo-removebg-preview.png"
-            alt="SpectraRig Logo"
-        /></a>
-      </div>
-
-      <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
-      <nav class="navbar">
-        <ul>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle">
-              Shop <span class="arrow">&#9662;</span>
-            </a>
-
-            <ul class="dropdown-menu">
-              <li class="has-submenu">
-                <a href="#">Laptops and Notebooks <span class="arrow">&#9662;</span></a>
-
-                <!-- submenu with divs -->
-                <div class="submenu">
-                  <div class="submenu-section">
-                    <h4>Laptops on Special</h4>
-                    <a href="#">Gaming Laptops on Special</a>
-                    <a href="#">AMD Laptops on Special</a>
-                    <a href="#">Intel Laptops on Special</a>
-                    <a href="#">All Laptops on Special</a>
-                  </div>
-                  <div class="submenu-section">
-                    <h4>Gaming Laptops</h4>
-                    <a href="#">GeForce Gaming Laptops</a>
-                    <a href="#">Intel Gaming Laptops</a>
-                    <a href="#">AMD Gaming Laptops</a>
-                  </div>
-                  <div class="submenu-section">
-                    <h4>Intel Laptops</h4>
-                    <a href="#">All Intel Laptops</a>
-                  </div>
-                  <div class="submenu-section">
-                    <h4>AMD Laptops</h4>
-                    <a href="#">All AMD Laptops</a>
-                  </div>                  
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="SpectraRig — your ultimate destination for gaming gear, laptops, monitors, chairs, and accessories. Power up your setup with premium tech built for performance.">
+        <meta name="keywords" content="gaming, tech, laptops, monitors, chairs, accessories, setups, SpectraRig, online store, gaming equipment">
+        <meta name="author" content="Bernadette Brits">
+        <title>SpectraRig | Home</title>
+        <link rel="stylesheet" href="style.css">
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+            integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        >
+    </head>
+    <body>
+        <header>
+            <section class="navbar-1">
+                <div class="nav-logo">
+                    <a href="index.html">
+                        <img src="images/logo/spectarig_logo-removebg-preview.png" alt="SpectraRig Logo">
+                    </a>
                 </div>
-              </li>
-
-              <li class="has-submenu">
-                <a href="#">Gaming Chairs <span class="arrow">&#9662;</span></a>
-                <div class="submenu">
-                  <div class="submenu-section">
-                    <h4>Gaming Chair Deals</h4>
-                    <a href="#">Gaming Chairs Under R4000</a>
-                    <a href="#">Gaming Chairs Above R4000</a>
-                    <a href="#">Gaming Chairs on Special</a>
-                    <a href="#">All Gaming Chairs</a>
-                  </div>
+                <div>
+                    <form class="search-bar">
+                        <input type="text" placeholder="Search products...">
+                        <button type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
                 </div>
-              </li>
-
-              <li class="has-submenu">
-                <a href="#">Monitors <span class="arrow">&#9662;</span></a>
-                <div class="submenu">
-                  <div class="submenu-section">
-                    <h4>Monitor Deals</h4>
-                    <a href="#">Monitors on Special</a>
-                    <a href="#">All Monitors</a>
-                  </div>
+                <div class="account-cart">
+                    <a href="account.html" id="accountLink">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                    <a href="">Sign In</a>
+                    <a href="">Register</a>
+                    <a href="">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
                 </div>
-              </li>
-
-              <li class="has-submenu">
-                <a href="#">More <span class="arrow">&#9662;</span></a>
-                <div class="submenu">
-                  <div class="submenu-section">
-                    <h4></h4>
-                    <a href="#">Mouse</a>
-                    <a href="#">Keyboard</a>
-                    <a href="#">Headsets</a>
-                    <a href="#">Microphones</a>
-                    <a href="#">Deskpads and Mousepads</a>
-                  </div>
+            </section>
+            
+            <!-- === MOBILE BOTTOM NAV (ACCOUNT + CART) === -->
+            <div class="mobile-bottom-nav">
+                <a href="account.html">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Account</span>
+                </a>
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Cart</span>
+                </a>
+            </div>
+        </header>
+        <main>
+            <section></section>
+            <section></section>
+            <section></section>
+            <section></section>
+        </main>
+        <footer>
+            <div>
+                <div>
+                    <h3>Opening Times</h3>
+                    <p>Monday - Friday 9AM - 4PM</p>
+                    <p>Saturday 9AM - 12PM</p>
+                    <p>Sunday Closed</p>
+                    <p>Public Holidays 9AM - 12PM</p>
                 </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
+                <div>
+                    <h3>Join Our Community</h3>
+                    <a herf="">
+                        <i></i>
+                    </a>
+                    <a herf="">
+                        <i></i>
+                    </a>
+                    <a herf="">
+                        <i></i>
+                    </a>
+                    <a herf="">
+                        <i></i>
+                    </a>
+                    <a herf="">
+                        <i></i>
+                    </a>
+                </div>
+                <div>
+                    <h3>Contact Us</h3>
+                    <a herf="">
+                        <i></i>
+                    </a>
+                    <a herf="">
+                        <i></i>
+                    </a>
+                    <a herf="">
+                        <i></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <p>&copy; Copyright All rights reserved.</p>
+            </div>
+        </footer>
+        <script src="js/main.js"></script>
 
-      <div class="nav-right">
-        <form class="search-bar">
-          <input type="text" placeholder="Search products..." />
-          <button type="submit"><i class="fa fa-search"></i></button>
-        </form>
-      </div>
-    </header>
-
-    <main>
-      <section></section>
-      <section></section>
-      <section></section>
-      <section></section>
-    </main>
-
-    <footer>
-      <div>
-        <div>
-          <h3>Opening Times</h3>
-          <p>Monday - Friday 9AM - 4PM</p>
-          <p>Saturday 9AM - 12PM</p>
-          <p>Sunday Closed</p>
-          <p>Public Holidays 9AM - 12PM</p>
-        </div>
-        <div>
-          <h3>Join Our Community</h3>
-          <a herf=""><i></i></a>
-          <a herf=""><i></i></a>
-          <a herf=""><i></i></a>
-          <a herf=""><i></i></a>
-          <a herf=""><i></i></a>
-        </div>
-        <div>
-          <h3>Contact Us</h3>
-          <a herf=""><i></i></a>
-          <a herf=""><i></i></a>
-          <a herf=""><i></i></a>
-        </div>
-      </div>  
-      <div>
-        <p>&copy; Copyright All rights reserved.</p>
-      </div>
-    </footer>
-  </body>
+    </body>
 </html>
