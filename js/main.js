@@ -1,160 +1,142 @@
-/* menu.js — combined, with dynamic left-column locking + icon swap */
-
-/* Elements */
 const menuBtn = document.getElementById('menu-btn');
 const dropdown = document.getElementById('dropdown-menu');
 const overlay = document.getElementById('overlay');
 const menuItems = document.querySelectorAll('.menu-item');
 const submenus = document.querySelectorAll('.submenu');
-const mainMenu = document.querySelector('.main-menu');           // left column
-const submenuContainer = document.querySelector('.submenu-container'); // right area
-
-// icon inside the button (assumes <button id="menu-btn"><i class="fa ..."></i> Menu</button>)
+const submenuContainer = document.querySelector('.submenu-container');
 const icon = menuBtn.querySelector('i');
 
 let hideTimer = null;
-const HIDE_DELAY = 200; // ms
+const HIDE_DELAY = 200;
+const GAP_FROM_EDGE = 20; // px gap from viewport edge
 
-/* Helper: lock main-menu height to its natural content height */
-function lockMainMenuHeight() {
-  if (!mainMenu) return;
-  // measure natural full height (including items)
-  const natural = mainMenu.scrollHeight;
-  // clamp to viewport height if needed
-  const viewportAvailable = Math.max(window.innerHeight - 120, 120); // 120px safety for top offset
-  const finalHeight = Math.min(natural, viewportAvailable);
-  mainMenu.style.height = finalHeight + 'px';
-  mainMenu.style.overflow = 'hidden';
-  // re-enable scrolling after the open animation completes
-  setTimeout(() => {
-    // keep overflow auto only if content is taller than available (so scrollbar shows)
-    if (natural > viewportAvailable) mainMenu.style.overflow = 'auto';
-    else mainMenu.style.overflow = '';
-  }, 350); // match your CSS transition duration (approx)
+function clampWidth(w) {
+  const maxAllowed = Math.max(200, window.innerWidth - GAP_FROM_EDGE * 2);
+  return Math.min(Math.ceil(w), maxAllowed);
 }
 
-/* Helper: reset main-menu height */
-function resetMainMenuHeight() {
-  if (!mainMenu) return;
-  mainMenu.style.height = '';
-  mainMenu.style.overflow = '';
+function measureIntrinsicWidth(el) {
+  // Create an off-screen clone to measure intrinsic width without layout constraints.
+  const clone = el.cloneNode(true);
+  const style = clone.style;
+  style.position = 'absolute';
+  style.left = '-99999px';
+  style.top = '-99999px';
+  style.width = 'auto';
+  style.maxWidth = 'none';
+  style.visibility = 'hidden';
+  style.display = 'block';
+  // ensure grid keeps its internal sizing
+  const gridChildren = clone.querySelectorAll('.submenu-grid, .submenu-card');
+  gridChildren.forEach(n => {
+    // remove any 1fr style that could rely on container by ensuring width auto
+    n.style.width = 'auto';
+  });
+
+  document.body.appendChild(clone);
+  // force layout
+  const measured = clone.getBoundingClientRect().width;
+  document.body.removeChild(clone);
+  return measured;
 }
 
-/* Toggle dropdown open/close and swap icon */
-menuBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const isActive = dropdown.classList.toggle('active');
+function openMainMenu() {
+  dropdown.classList.add('active');
+  overlay.style.display = 'block';
+  icon.classList.remove('fa-bars');
+  icon.classList.add('fa-xmark');
+}
 
-  // show/hide overlay
-  overlay.style.display = isActive ? 'block' : 'none';
-
-  // icon swap
-  if (icon) {
-    if (isActive) {
-      icon.classList.remove('fa-bars');
-      icon.classList.add('fa-xmark');
-      // lock left column height now that menu is open
-      lockMainMenuHeight();
-    } else {
-      icon.classList.remove('fa-xmark');
-      icon.classList.add('fa-bars');
-      // cleanup
-      resetMainMenuHeight();
-      dropdown.classList.remove('expanded');
-      submenus.forEach(s => s.classList.remove('active'));
-      dropdown.style.height = '';
-    }
-  } else {
-    // fallback: still lock height if no icon found
-    if (isActive) lockMainMenuHeight();
-  }
-});
-
-/* Close when clicking outside */
-overlay.addEventListener('click', () => {
-  dropdown.classList.remove('active', 'expanded');
-  overlay.style.display = 'none';
+function closeAll() {
+  dropdown.classList.remove('active');
+  submenuContainer.classList.remove('active');
   submenus.forEach(s => s.classList.remove('active'));
-  dropdown.style.height = '';
+  overlay.style.display = 'none';
+  submenuContainer.style.width = '';
+  icon.classList.remove('fa-xmark');
+  icon.classList.add('fa-bars');
+}
 
-  // reset icon and left column
-  if (icon) {
-    icon.classList.remove('fa-xmark');
-    icon.classList.add('fa-bars');
+menuBtn.addEventListener('click', () => {
+  if (dropdown.classList.contains('active')) {
+    closeAll();
+  } else {
+    openMainMenu();
   }
-  resetMainMenuHeight();
 });
 
-/* Show submenu on hover (pointerenter) */
+
+overlay.addEventListener('click', closeAll);
+
+// Show submenu on hover (or pointerenter)
 menuItems.forEach(item => {
   item.addEventListener('pointerenter', () => {
-    // if menu isn't open, ignore (keeps the dropdown hidden until opened)
-    if (!dropdown.classList.contains('active')) return;
-
-    // cancel hide timer
-    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
-
+    clearTimeout(hideTimer);
     const targetId = item.dataset.sub;
-    if (!targetId) return;
+    const target = document.getElementById(targetId);
+    if (!target) return;
 
-    // expand main dropdown horizontally
-    dropdown.classList.add('expanded');
+    // remove active from others first
+    submenus.forEach(s => s.classList.remove('active'));
+    // activate target submenu and container (so visual state changes immediately)
+    target.classList.add('active');
+    submenuContainer.classList.add('active');
 
-    // show matching submenu and set dropdown height to match submenu content
-    submenus.forEach(s => {
-      if (s.id === targetId) {
-        s.classList.add('active');
-        // measure and set container height on next frame for accurate layout
-        requestAnimationFrame(() => {
-          const h = s.scrollHeight;
-          
-        });
-      } else {
-        s.classList.remove('active');
-      }
+    // Use RAF to let the class apply (not strictly necessary due to clone, but keeps smoothness)
+    requestAnimationFrame(() => {
+      // measure intrinsic width via clone (unaffected by current container size)
+      let measuredWidth = measureIntrinsicWidth(target);
+
+      // add submenuContainer horizontal paddings to measured width
+      const comp = window.getComputedStyle(submenuContainer);
+      const padLeft = parseFloat(comp.paddingLeft) || 0;
+      const padRight = parseFloat(comp.paddingRight) || 0;
+      measuredWidth += padLeft + padRight;
+
+      // clamp to viewport and set
+      measuredWidth = clampWidth(measuredWidth);
+      submenuContainer.style.width = measuredWidth + 'px';
     });
   });
 });
 
-/* Keep submenu open while hovering either column */
-[mainMenu, submenuContainer].forEach(el => {
-  if (!el) return;
-  el.addEventListener('pointerenter', () => {
-    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
-  });
+// Keep submenu open while hovering either panel
+[dropdown, submenuContainer].forEach(el => {
+  el.addEventListener('pointerenter', () => clearTimeout(hideTimer));
 });
 
-/* When pointer leaves the whole dropdown, collapse the submenu after a delay */
-dropdown.addEventListener('pointerleave', () => {
-  if (hideTimer) clearTimeout(hideTimer);
+// Hide when pointer leaves both panels (with delay)
+document.addEventListener('pointermove', e => {
+  // if pointer inside dropdown or submenu-container, ignore
+  const insideDropdown = !!e.target.closest && e.target.closest('#dropdown-menu');
+  const insideSubmenu = !!e.target.closest && e.target.closest('.submenu-container');
+  if (insideDropdown || insideSubmenu) {
+    clearTimeout(hideTimer);
+    return;
+  }
+  // otherwise schedule hide
+  clearTimeout(hideTimer);
   hideTimer = setTimeout(() => {
-    dropdown.classList.remove('expanded');
+    submenuContainer.classList.remove('active');
     submenus.forEach(s => s.classList.remove('active'));
-    dropdown.style.height = '';
-    hideTimer = null;
+    submenuContainer.style.width = '';
   }, HIDE_DELAY);
 });
 
-/* Close on Escape */
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    dropdown.classList.remove('active', 'expanded');
-    overlay.style.display = 'none';
-    submenus.forEach(s => s.classList.remove('active'));
-    dropdown.style.height = '';
-    if (icon) {
-      icon.classList.remove('fa-xmark');
-      icon.classList.add('fa-bars');
-    }
-    resetMainMenuHeight();
-  }
+// Close with Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAll();
 });
 
-/* Resize handling: if viewport resizes while menu is open, re-lock main-menu height */
+// Recompute on resize (keeps width sensible if user resizes window while open)
 window.addEventListener('resize', () => {
-  if (dropdown.classList.contains('active')) {
-    lockMainMenuHeight();
-  } else {
-    resetMainMenuHeight();
-  }
+  const active = document.querySelector('.submenu.active');
+  if (!active) return;
+  // measure again
+  requestAnimationFrame(() => {
+    let w = measureIntrinsicWidth(active);
+    const comp = window.getComputedStyle(submenuContainer);
+    w += (parseFloat(comp.paddingLeft) || 0) + (parseFloat(comp.paddingRight) || 0);
+    submenuContainer.style.width = clampWidth(w) + 'px';
+  });
 });
