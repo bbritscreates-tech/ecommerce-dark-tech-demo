@@ -416,6 +416,10 @@ header {
   .nav2-links {
     display: none;
   }
+
+  .navbar-section {
+    justify-content: center;
+  }
 }
 
 
