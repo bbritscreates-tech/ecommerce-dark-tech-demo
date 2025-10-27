@@ -407,10 +407,12 @@ header {
   .mobile-menu-item .arrow {
     font-size: 12px;
     transition: transform 0.3s ease;
+    transform: rotate(270deg);
   }
 
   .mobile-menu-item.open .arrow {
-    transform: rotate(180deg);
+    transform: rotate(360deg);
+    
   }
 
   .nav2-links {

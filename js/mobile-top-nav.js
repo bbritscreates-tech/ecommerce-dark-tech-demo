@@ -29,10 +29,12 @@ mobileMenuItems.forEach(item => {
       const otherSub = i.querySelector('.mobile-submenu');
       if (otherSub && otherSub !== submenu) {
         otherSub.classList.remove('active');
+        i.classList.remove('open');
       }
     });
 
     // Toggle clicked submenu
     submenu.classList.toggle('active');
+    item.classList.toggle('open');
   });
 });
