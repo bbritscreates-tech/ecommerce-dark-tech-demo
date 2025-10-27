@@ -259,6 +259,27 @@ header {
   color: #7b00ff;
 }
 
+footer {
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: row;
+  padding: 20px 35px;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.footer-content {
+  flex: 1;
+}
+
+.copyright {
+  text-align: center;
+}
+
 /* Responsive tweaks */
 @media (max-width: 900px) {
   .submenu-container {
