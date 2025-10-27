@@ -276,6 +276,18 @@ footer {
   flex: 1;
 }
 
+.footer-content h3 {
+  padding-bottom: 20px;
+}
+
+.footer-content p {
+  line-height: 2rem;
+}
+
+.footer-content a:hover {
+  color: #7b00ff;
+}
+
 .copyright {
   text-align: center;
 }
