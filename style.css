@@ -262,6 +262,7 @@ header {
 footer {
   background-color: #1a1a1a;
   color: #fff;
+  padding-bottom: 25px;
 }
 
 .footer-container {
@@ -278,18 +279,31 @@ footer {
 
 .footer-content h3 {
   padding-bottom: 20px;
+  font-size: 25px;
 }
 
 .footer-content p {
   line-height: 2rem;
+  font-size: 18px;
+}
+
+.footer-content a {
+  font-size: 25px;
+  padding-left: 5px;
 }
 
 .footer-content a:hover {
   color: #7b00ff;
 }
 
+.footer-content .contact a {
+  font-size: 20px;
+  line-height: 2rem;
+}
+
 .copyright {
   text-align: center;
+  font-size: 20px;
 }
 
 /* Responsive tweaks */
