@@ -308,6 +308,26 @@ footer {
   font-size: 20px;
 }
 
+.top-flex-section {
+  background: #1a1a1a;
+}
+
+.top-flex-section h2 {
+  color: #fff;
+  padding: 20px 20px;
+}
+
+.flex-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  gap: 20px;
+}
+
+.card {}
+
+
 /* Responsive tweaks */
 
 @media (max-width: 480px) {
@@ -605,7 +625,7 @@ footer {
   }
 }
 
-@media (min-width: 640px) and (max-width: 768px) {
+@media (min-width: 641px) and (max-width: 768px) {
   .account-cart {
     display: none;
   }
