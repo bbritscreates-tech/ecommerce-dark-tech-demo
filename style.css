@@ -156,11 +156,12 @@ header {
   overflow: hidden;
 }
 
-.menu-item {
+.menu-item, .menu-item a {
   padding: 14px 18px;
   cursor: pointer;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   color: #fff;
+  text-decoration: none;
 }
 
 .menu-item:hover {
