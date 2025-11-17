@@ -186,43 +186,108 @@
             <div class="container shop-container">
                 <!-- Sidebar -->
                 <aside class="sidebar">
-  <ul>
+                    <ul>
 
-    <li data-category="all" class="active">All</li>
+                        <li data-category="all" class="active">All</li>
 
-    <li class="has-dropdown" data-category="laptops">
-      Laptops <i class="fa-solid fa-caret-down"></i>
-      <ul class="dropdown">
-        <li data-category="normal-laptops">Laptops</li>
-        <li data-category="gaming-laptops">Gaming Laptops</li>
-      </ul>
-    </li>
+                        <li class="has-dropdown" data-category="laptops">
+                            Laptops <i class="fa-solid fa-caret-down"></i>
+                            <ul class="dropdown">
+                                <li data-category="normal-laptops">Laptops</li>
+                                <li data-category="gaming-laptops">Gaming Laptops</li>
+                            </ul>
+                        </li>
 
-    <li class="has-dropdown" data-category="chairs">
-      Chairs <i class="fa-solid fa-caret-down"></i>
-      <ul class="dropdown">
-        <li data-category="office-chairs">Office Chairs</li>
-        <li data-category="gaming-chairs">Gaming Chairs</li>
-      </ul>
-    </li>
+                        <li class="has-dropdown" data-category="chairs">
+                            Chairs <i class="fa-solid fa-caret-down"></i>
+                            <ul class="dropdown">
+                                <li data-category="office-chairs">Office Chairs</li>
+                                <li data-category="gaming-chairs">Gaming Chairs</li>
+                            </ul>
+                        </li>
 
-    <li data-category="monitors">Monitors</li>
+                        <li data-category="monitors">Monitors</li>
 
-    <li class="has-dropdown" data-category="accessories">
-      Accessories <i class="fa-solid fa-caret-down"></i>
-      <ul class="dropdown">
-        <li data-category="mouse">Mouse</li>
-        <li data-category="keyboards">Keyboards</li>
-        <li data-category="combo">Combo</li>
-      </ul>
-    </li>
+                        <li class="has-dropdown" data-category="accessories">
+                            Accessories <i class="fa-solid fa-caret-down"></i>
+                            <ul class="dropdown">
+                                <li data-category="mouse">Mouse</li>
+                                <li data-category="keyboards">Keyboards</li>
+                                <li data-category="combo">Combo</li>
+                            </ul>
+                        </li>
 
-  </ul>
-</aside>
+                    </ul>
+                    <button id="filterToggle" class="filter-btn">
+                        <i class="fa-solid fa-filter"></i> Filters
+                    </button>
+
+                    <div id="filterPanel" class="filter-panel">
+                        <!-- Price -->
+                        <div class="filter-group">
+                            <label>Price Range</label>
+                            <input type="number" id="minPrice" placeholder="Min price">
+                            <input type="number" id="maxPrice" placeholder="Max price">
+                        </div>
+
+                        <!-- Brand -->
+                        <div class="filter-group">
+                            <label>Brand</label>
+                            <select id="brandFilter">
+                                <option value="">All Brands</option>
+                                <option value="SkylineTech">SkylineTech</option>
+                                <option value="NexoraBook">NexoraBook</option>
+                                <option value="AeroCore">AeroCore</option>
+                                <option value="QuantumShift">QuantumShift</option>
+                                <option value="Veltora">Veltora</option>
+                                <option value="ComfyNest">ComfyNest</option>
+                                <option value="AeroLift">AeroLift</option>
+                                <option value="ErgoMaster">ErgoMaster</option>
+                                <option value="SteelCore">SteelCore</option>
+                                <option value="PrimeLuxe">PrimeLuxe</option>
+                                <option value="ThunderSeat">ThunderSeat</option>
+                                <option value="TitanForge">TitanForge</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="AetherVision">AetherVision</option>
+                                <option value="ClariSync">ClariSync</option>
+                                <option value="OptiView">OptiView</option>
+                                <option value="PixelVantage">PixelVantage</option>
+                                <option value="QuantumSight">QuantumSight</option>
+                                <option value="VisionaryX">VisionaryX</option>
+                                <option value="GlideWave">GlideWave</option>
+                                <option value="SwiftClick">SwiftClick</option>
+                                <option value="AstraPulse">AstraPulse</option>
+                                <option value="ErgoKey">ErgoKey</option>
+                                <option value="KeySync">KeySync</option>
+                                <option value="ByteWave">ByteWave</option>
+                            </select>
+                        </div>
+
+                        <!-- Screen size -->
+                        <div class="filter-group">
+                            <label>Screen Size</label>
+                            <select id="screenFilter">
+                                <option value="">Any</option>
+                                <option value="13">13 inch</option>
+                                <option value="14">14 inch</option>
+                                <option value="15">15 inch</option>
+                                <option value="17">17 inch</option>
+                                <option value="24">24 inch</option>
+                                <option value="27">27 inch</option>
+                                <option value="32">32 inch</option>
+                                <option value="34">34 inch</option>
+                                <option value="49">49 inch</option>
+                            </select>
+                        </div>
+
+                        <button id="applyFilters" class="apply-btn">Apply Filters</button>
+                    </div>
+                </aside>
 
                 <!-- Products -->
                 <div class="product-grid">
-                    <div class="product-card" data-category="normal-laptops" data-id="SkylineTech-Airlite-Pro-13">
+                    <div class="product-card" data-category="normal-laptops" data-id="SkylineTech-Airlite-Pro-13"
+                        data-price="16200" data-brand="SkylineTech" data-screen="13">
                         <div class="img-wrap">
                             <a href="product pages/daycream.html?product=daycream">
                                 <img src="images/Products/Laptops/SkylineTech Airlite Pro 13.jpg" alt="" />
@@ -233,7 +298,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="normal-laptops" data-id="NexoraBook-Prime-15">
+                    <div class="product-card" data-category="normal-laptops" data-id="NexoraBook-Prime-15"
+                        data-price="21600" data-brand="NexoraBook" data-screen="15">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Laptops/NexoraBook Prime 15.jpg" alt="" />
@@ -244,7 +310,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="normal-laptops" data-id="AeroCore-Flux-14">
+                    <div class="product-card" data-category="normal-laptops" data-id="AeroCore-Flux-14"
+                        data-price="14400" data-brand="AeroCore" data-screen="14">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Laptops/AeroCore Flux 14.jpg" alt="" />
@@ -255,7 +322,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="gaming-laptops" data-id="QuantumShift-Titan-17">
+                    <div class="product-card" data-category="gaming-laptops" data-id="QuantumShift-Titan-17"
+                        data-price="39600" data-brand="QuantumShift" data-screen="17">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Laptops/QuantumShift Titan 17.jpg" alt="" />
@@ -266,7 +334,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="gaming-laptops" data-id="Veltora-EdgeX-16">
+                    <div class="product-card" data-category="gaming-laptops" data-id="Veltora-EdgeX-16"
+                        data-price="27000" data-brand="Veltora" data-screen="16">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Laptops/Veltora EdgeX 16.jpg" alt="" />
@@ -277,7 +346,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="office-chairs" data-id="ComfyNest-VelvetSoft">
+                    <div class="product-card" data-category="office-chairs" data-id="ComfyNest-VelvetSoft"
+                        data-price="2300" data-brand="ComfyNest">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/ComfyNest VelvetSoft.jpg" alt="" />
@@ -288,7 +358,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="office-chairs" data-id="AeroLift-Lightweight-Task-Chair">
+                    <div class="product-card" data-category="office-chairs" data-id="AeroLift-Lightweight-Task-Chair"
+                        data-price="1050" data-brand="AeroLift">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/AeroLift Lightweight Task Chair.jpg" alt="" />
@@ -299,7 +370,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="office-chairs" data-id="ErgoMaster-FlowPro-360">
+                    <div class="product-card" data-category="office-chairs" data-id="ErgoMaster-FlowPro-360"
+                        data-price="3400" data-brand="ErgoMaster">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/ErgoMaster FlowPro 360.jpg" alt="" />
@@ -310,7 +382,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="office-chairs" data-id="SteelCore-ProMesh-2">
+                    <div class="product-card" data-category="office-chairs" data-id="SteelCore-ProMesh-2"
+                        data-price="2900" data-brand="SteelCore">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/SteelCore ProMesh 2.jpg" alt="" />
@@ -321,7 +394,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="office-chairs" data-id="PrimeLuxe-Commander-Elite">
+                    <div class="product-card" data-category="office-chairs" data-id="PrimeLuxe-Commander-Elite"
+                        data-price="5400" data-brand="PrimeLuxe">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/PrimeLuxe Commander Elite.jpg" alt="" />
@@ -332,7 +406,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="gaming-chairs" data-id="ThunderSeat-StrikeX">
+                    <div class="product-card" data-category="gaming-chairs" data-id="ThunderSeat-StrikeX"
+                        data-price="5000" data-brand="ThunderSeat">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/ThunderSeat StrikeX.jpg" alt="" />
@@ -343,7 +418,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="gaming-chairs" data-id="TitanForge-Apex-GT">
+                    <div class="product-card" data-category="gaming-chairs" data-id="TitanForge-Apex-GT"
+                        data-price="4500" data-brand="TitanForge">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/TitanForge Apex GT.jpg" alt="" />
@@ -354,7 +430,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="gaming-chairs" data-id="Hybrid-GamingOffice-Chair">
+                    <div class="product-card" data-category="gaming-chairs" data-id="Hybrid-GamingOffice-Chair"
+                        data-price="4500" data-brand="Hybrid">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/Hybrid GamingOffice Chair.jpg" alt="" />
@@ -365,18 +442,20 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="gaming-chairs" data-id="DriftForge-Vortex-Gaming-Chair">
+                    <div class="product-card" data-category="gaming-chairs" data-id="DriftForge-Vortex-Gaming-Chair"
+                        data-price="7200" data-brand="DriftForge">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Chairs/DriftForge Vortex Gaming Chair.jpg" alt="" />
-                                <h3>DriftForge Vortex Gaming</h3>
+                                <h3>Hybrid Vortex Gaming</h3>
                             </a>
                         </div>
                         <p>R 7 200.00</p>
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="AetherVision-HDR-27">
+                    <div class="product-card" data-category="monitors" data-id="AetherVision-HDR-27" data-price="6800"
+                        data-brand="AetherVision" data-screen="27">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/AetherVision HDR 27.jpg" alt="" />
@@ -387,7 +466,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="ClariSync-Business-24">
+                    <div class="product-card" data-category="monitors" data-id="ClariSync-Business-24" data-price="3900"
+                        data-brand="ClariSync" data-screen="24">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/ClariSync Business 24.jpg" alt="" />
@@ -398,7 +478,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="OptiView-CurveUltra-34">
+                    <div class="product-card" data-category="monitors" data-id="OptiView-CurveUltra-34"
+                        data-price="10800" data-brand="OptiView" data-screen="34">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/OptiView CurveUltra 34.jpg" alt="" />
@@ -409,7 +490,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="OptiView-RapidSync-24">
+                    <div class="product-card" data-category="monitors" data-id="OptiView-RapidSync-24" data-price="5400"
+                        data-brand="OptiView" data-screen="24">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/OptiView RapidSync 24.jpg" alt="" />
@@ -420,7 +502,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="PixelVantage-GamiMax-27">
+                    <div class="product-card" data-category="monitors" data-id="PixelVantage-GamiMax-27"
+                        data-price="8000" data-brand="PixelVantage" data-screen="27">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/PixelVantage GamiMax 27.jpg" alt="" />
@@ -431,7 +514,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="PixelVantage-UltraWide-34">
+                    <div class="product-card" data-category="monitors" data-id="PixelVantage-UltraWide-34"
+                        data-price="11700" data-brand="PixelVantage" data-screen="34">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/PixelVantage UltraWide 34.jpg" alt="" />
@@ -442,7 +526,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="QuantumSight-UltraWide-49">
+                    <div class="product-card" data-category="monitors" data-id="QuantumSight-UltraWide-49"
+                        data-price="23400" data-brand="QuantumShift" data-screen="49">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/QuantumSight UltraWide 49.jpg" alt="" />
@@ -453,7 +538,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="VisionaryX-Clarity-27">
+                    <div class="product-card" data-category="monitors" data-id="VisionaryX-Clarity-27" data-price="7200"
+                        data-brand="VisionaryX" data-screen="27">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/VisionaryX Clarity 27.jpg" alt="" />
@@ -464,7 +550,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="VisionaryX-ProColor-32">
+                    <div class="product-card" data-category="monitors" data-id="VisionaryX-ProColor-32"
+                        data-price="9900" data-brand="VisionaryX" data-screen="32">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Monitors/VisionaryX ProColor 32.jpg" alt="" />
@@ -475,18 +562,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="monitors" data-id="VisionaryX-ProColor-32">
-                        <div class="img-wrap">
-                            <a href="">
-                                <img src="images/Products/Monitors/ZenView ZenScreen 15.jpg" alt="" />
-                                <h3>VisionaryX ProColor 32</h3>
-                            </a>
-                        </div>
-                        <p>R 9 900.00</p>
-                        <i class="fa-solid fa-heart wishlist-icon"></i>
-                        <button class="btn-add">Add to Cart</button>
-                    </div>
-                    <div class="product-card" data-category="mouse" data-id="GlideWave-Spectra-Mouse">
+                    <div class="product-card" data-category="mouse" data-id="GlideWave-Spectra-Mouse" data-price="1600"
+                        data-brand="GlideWave">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Mouse & Keyboard/GlideWave Spectra Mouse.jpg" alt="" />
@@ -497,7 +574,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="mouse" data-id="SwiftClick-RazorLite-Mouse">
+                    <div class="product-card" data-category="mouse" data-id="SwiftClick-RazorLite-Mouse"
+                        data-price="1100" data-brand="SwiftClick">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Mouse & Keyboard/SwiftClick RazorLite Mouse.jpg" alt="" />
@@ -508,7 +586,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="keyboards" data-id="AstraPulse-MacroBoard-Keyboard">
+                    <div class="product-card" data-category="keyboards" data-id="AstraPulse-MacroBoard-Keyboard"
+                        data-price="2700" data-brand="AstraPulse">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Mouse & Keyboard/AstraPulse MacroBoard Keyboard.jpg" alt="" />
@@ -519,7 +598,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="keyboards" data-id="ErgoKey-Stream-75-Keyboard">
+                    <div class="product-card" data-category="keyboards" data-id="ErgoKey-Stream-75-Keyboard"
+                        data-price="2150" data-brand="ErgoKey">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Mouse & Keyboard/ErgoKey Stream 75 Keyboard.jpg" alt="" />
@@ -530,7 +610,8 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="keyboards" data-id="KeySync-WaveTouch-Keyboard">
+                    <div class="product-card" data-category="keyboards" data-id="KeySync-WaveTouch-Keyboard"
+                        data-price="1400" data-brand="KeySync">
                         <div class="img-wrap">
                             <a href="">
                                 <img src="images/Products/Mouse & Keyboard/KeySync WaveTouch Keyboard.jpg" alt="" />
@@ -541,10 +622,12 @@
                         <i class="fa-solid fa-heart wishlist-icon"></i>
                         <button class="btn-add">Add to Cart</button>
                     </div>
-                    <div class="product-card" data-category="combo" data-id="ByteWave DuoSet">
+                    <div class="product-card" data-category="combo" data-id="ByteWave DuoSet" data-price="2300"
+                        data-brand="ByteWave">
                         <div class="img-wrap">
                             <a href="">
-                                <img src="images/Products/Mouse & Keyboard/ByteWave DuoSet (Keyboard + Mouse).jpg" alt="" />
+                                <img src="images/Products/Mouse & Keyboard/ByteWave DuoSet (Keyboard + Mouse).jpg"
+                                    alt="" />
                                 <h3>ByteWave DuoSet</h3>
                             </a>
                         </div>

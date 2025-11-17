@@ -45,131 +45,133 @@
 
       /* -------------------- CATEGORY + DROPDOWN (NEW CLEAN VERSION) -------------------- */
       /* ====== Sidebar filtering (delegation) ====== */
-(function () {
-  try {
-    const sidebar = document.querySelector('.sidebar');
-    const productGrid = document.querySelector('.product-grid');
-    const productCards = Array.from(document.querySelectorAll('.product-card'));
+      (function () {
+        try {
+          const sidebar = document.querySelector('.sidebar');
+          const productGrid = document.querySelector('.product-grid');
+          const productCards = Array.from(document.querySelectorAll('.product-card'));
 
-    if (!sidebar) throw new Error('Sidebar element not found.');
-    if (!productGrid) throw new Error('Product grid not found.');
+          if (!sidebar) throw new Error('Sidebar element not found.');
+          if (!productGrid) throw new Error('Product grid not found.');
 
-    // Utility: show/hide cards by category string or array
-    function filterProducts(category) {
-      productCards.forEach(card => {
-        const cardCat = card.dataset.category || '';
-        if (category === 'all') {
-          card.style.display = '';
-        } else if (Array.isArray(category)) {
-          card.style.display = category.includes(cardCat) ? '' : 'none';
-        } else {
-          card.style.display = (cardCat === category) ? '' : 'none';
+          // Utility: show/hide cards by category string or array
+          function filterProducts(category) {
+            productCards.forEach(card => {
+              const cardCat = card.dataset.category || '';
+              if (category === 'all') {
+                card.style.display = '';
+              } else if (Array.isArray(category)) {
+                card.style.display = category.includes(cardCat) ? '' : 'none';
+              } else {
+                card.style.display = (cardCat === category) ? '' : 'none';
+              }
+            });
+          }
+
+          function clearActive() {
+            sidebar.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+          }
+
+          function closeOtherDropdowns(keep = null) {
+            sidebar.querySelectorAll('.has-dropdown').forEach(d => {
+              if (d !== keep) d.classList.remove('open');
+            });
+          }
+
+          // Helper: return array of child category names for a parent li.has-dropdown
+          function getChildCategories(parentLi) {
+            return Array.from(parentLi.querySelectorAll('.dropdown li[data-category]'))
+              .map(li => li.dataset.category)
+              .filter(Boolean);
+          }
+
+          // Delegated click listener
+          sidebar.addEventListener('click', function (e) {
+            const clickedLi = e.target.closest('li[data-category]');
+            if (!clickedLi) {
+              return; // clicked outside category items
+            }
+
+            // Is the clicked li a subcategory inside a dropdown?
+            const insideDropdown = !!clickedLi.closest('.dropdown');
+
+            if (insideDropdown) {
+              // Subcategory clicked (e.g. gaming-laptops)
+              const cat = clickedLi.dataset.category;
+              clearActive();
+              clickedLi.classList.add('active');
+
+              const parent = clickedLi.closest('.has-dropdown');
+              if (parent) {
+                parent.classList.add('open');       // ensure parent dropdown is open
+                parent.classList.add('active');     // show context
+                closeOtherDropdowns(parent);
+              } else {
+                closeOtherDropdowns(null);
+              }
+
+              filterProducts(cat);
+              return;
+            }
+
+            // Not inside a dropdown -> could be parent has-dropdown OR top-level item like "All" or "Monitors"
+            if (clickedLi.classList.contains('has-dropdown')) {
+              // Parent label/caret clicked (e.g. Laptops, Chairs, Accessories)
+              const parent = clickedLi;
+              const childCats = getChildCategories(parent);
+
+              // Toggle open state for this parent and close others
+              const isOpen = parent.classList.toggle('open');
+              clearActive();
+              parent.classList.add('active');
+              closeOtherDropdowns(parent);
+
+              // When parent clicked, show ALL its child categories (if any)
+              if (childCats.length) {
+                filterProducts(childCats);
+              } else {
+                // fallback: if parent has no children, filter by parent's own category
+                filterProducts(parent.dataset.category || 'all');
+              }
+              return;
+            }
+
+            // Otherwise it's a plain top-level category item (e.g. All, Monitors)
+            const cat = clickedLi.dataset.category;
+            clearActive();
+            clickedLi.classList.add('active');
+            closeOtherDropdowns(null);
+
+            if (cat === 'all') {
+              filterProducts('all');
+            } else {
+              // top-level category (monitors etc.)
+              filterProducts(cat);
+            }
+          });
+
+          // INITIAL: respect .active if present, otherwise show all
+          const initial = sidebar.querySelector('li.active')?.dataset?.category || 'all';
+
+          if (initial === 'all') filterProducts('all');
+          else {
+            // If initial selection is a parent that has children, show children
+            const initialLi = sidebar.querySelector(`li[data-category="${initial}"]`);
+            if (initialLi?.classList.contains('has-dropdown')) {
+              const childCats = getChildCategories(initialLi);
+              if (childCats.length) filterProducts(childCats);
+              else filterProducts(initial);
+            } else {
+              filterProducts(initial);
+            }
+          }
+
+        } catch (err) {
+          console.error('Sidebar filter error:', err);
         }
-      });
-    }
 
-    function clearActive() {
-      sidebar.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-    }
-
-    function closeOtherDropdowns(keep = null) {
-      sidebar.querySelectorAll('.has-dropdown').forEach(d => {
-        if (d !== keep) d.classList.remove('open');
-      });
-    }
-
-    // Helper: return array of child category names for a parent li.has-dropdown
-    function getChildCategories(parentLi) {
-      return Array.from(parentLi.querySelectorAll('.dropdown li[data-category]'))
-        .map(li => li.dataset.category)
-        .filter(Boolean);
-    }
-
-    // Delegated click listener
-    sidebar.addEventListener('click', function (e) {
-      const clickedLi = e.target.closest('li[data-category]');
-      if (!clickedLi) return; // clicked outside category items
-
-      e.stopPropagation();
-
-      // Is the clicked li a subcategory inside a dropdown?
-      const insideDropdown = !!clickedLi.closest('.dropdown');
-
-      if (insideDropdown) {
-        // Subcategory clicked (e.g. gaming-laptops)
-        const cat = clickedLi.dataset.category;
-        clearActive();
-        clickedLi.classList.add('active');
-
-        const parent = clickedLi.closest('.has-dropdown');
-        if (parent) {
-          parent.classList.add('open');       // ensure parent dropdown is open
-          parent.classList.add('active');     // show context
-          closeOtherDropdowns(parent);
-        } else {
-          closeOtherDropdowns(null);
-        }
-
-        filterProducts(cat);
-        return;
-      }
-
-      // Not inside a dropdown -> could be parent has-dropdown OR top-level item like "All" or "Monitors"
-      if (clickedLi.classList.contains('has-dropdown')) {
-        // Parent label/caret clicked (e.g. Laptops, Chairs, Accessories)
-        const parent = clickedLi;
-        const childCats = getChildCategories(parent);
-
-        // Toggle open state for this parent and close others
-        const isOpen = parent.classList.toggle('open');
-        clearActive();
-        parent.classList.add('active');
-        closeOtherDropdowns(parent);
-
-        // When parent clicked, show ALL its child categories (if any)
-        if (childCats.length) {
-          filterProducts(childCats);
-        } else {
-          // fallback: if parent has no children, filter by parent's own category
-          filterProducts(parent.dataset.category || 'all');
-        }
-        return;
-      }
-
-      // Otherwise it's a plain top-level category item (e.g. All, Monitors)
-      const cat = clickedLi.dataset.category;
-      clearActive();
-      clickedLi.classList.add('active');
-      closeOtherDropdowns(null);
-
-      if (cat === 'all') {
-        filterProducts('all');
-      } else {
-        // top-level category (monitors etc.)
-        filterProducts(cat);
-      }
-    });
-
-    // INITIAL: respect .active if present, otherwise show all
-    const initial = sidebar.querySelector('li.active')?.dataset?.category || 'all';
-
-    if (initial === 'all') filterProducts('all');
-    else {
-      // If initial selection is a parent that has children, show children
-      const initialLi = sidebar.querySelector(`li[data-category="${initial}"]`);
-      if (initialLi?.classList.contains('has-dropdown')) {
-        const childCats = getChildCategories(initialLi);
-        if (childCats.length) filterProducts(childCats);
-        else filterProducts(initial);
-      } else {
-        filterProducts(initial);
-      }
-    }
-
-  } catch (err) {
-    console.error('Sidebar filter error:', err);
-  }
-})();
+        
+      })();
 
 
 
@@ -226,6 +228,88 @@
       } catch (err) {
         console.error("RecentlyViewed error:", err);
       }
+
+      /* -------------------- PRODUCT FILTERING -------------------- */
+      try {
+        /* -------------------- APPLY FILTERS -------------------- */
+try {
+    const applyBtn = document.getElementById("applyFilters");
+    const minPrice = document.getElementById("minPrice");
+    const maxPrice = document.getElementById("maxPrice");
+    const brandFilter = document.getElementById("brandFilter");
+    const screenFilter = document.getElementById("screenFilter");
+    const allCards = Array.from(document.querySelectorAll(".product-card"));
+
+    function applyFilters() {
+        const min = parseFloat(minPrice.value) || 0;
+        const max = parseFloat(maxPrice.value) || Infinity;
+        const brand = brandFilter.value;
+        const screen = screenFilter.value;
+
+        allCards.forEach(card => {
+            const price = parseFloat(card.dataset.price);
+            const cardBrand = card.dataset.brand;
+            const cardScreen = card.dataset.screen;
+
+            let show = true;
+
+            if (price < min || price > max) show = false;
+            if (brand && brand !== cardBrand) show = false;
+            if (screen && screen !== cardScreen) show = false;
+
+            card.style.display = show ? "" : "none";
+        });
+
+        console.log("Filters applied");
+    }
+
+    applyBtn?.addEventListener("click", applyFilters);
+
+} catch (err) {
+    console.error("Filter system fixed error:", err);
+}
+
+
+        function clearFilters() {
+          filterPrice.value = "";
+          filterBrand.value = "all";
+          filterSize.value = "all";
+
+          allCards.forEach(card => (card.style.display = ""));
+          console.log("Filters cleared");
+        }
+
+        applyBtn?.addEventListener("click", applyFilters);
+        clearBtn?.addEventListener("click", clearFilters);
+
+      } catch (err) {
+        console.error("Filter system error:", err);
+      }
+
+      /* --------- FILTER PANEL TOGGLE --------- */
+try {
+    const filterToggle = document.getElementById("filterToggle");
+    const filterPanel = document.getElementById("filterPanel");
+
+    if (filterToggle && filterPanel) {
+        filterToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            filterPanel.style.display =
+                filterPanel.style.display === "block" ? "none" : "block";
+        });
+
+        // close when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!filterPanel.contains(e.target) && e.target !== filterToggle) {
+                filterPanel.style.display = "none";
+            }
+        });
+    }
+} catch (err) {
+    console.error("Filter panel toggle error:", err);
+}
+
+
 
       console.log("shop.js initialisation complete.");
     });
