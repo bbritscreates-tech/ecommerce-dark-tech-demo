@@ -308,8 +308,25 @@ footer {
   font-size: 20px;
 }
 
+.hero {
+  background-color: #1a1a1a;
+  padding: 40px 0;
+}
+
+.hero-banner {
+  width: 1000px;
+  justify-self: center;
+}
+
+.hero-banner img {
+  width: 100%;
+  border-radius: 20px;
+}
+
+
 .top-flex-section {
   background: #1a1a1a;
+  padding-bottom: 30px;
 }
 
 .top-flex-section h2 {
@@ -325,9 +342,123 @@ footer {
   gap: 20px;
 }
 
-.card {}
+.card {
+  flex: initial;
+  width: 200px;
+  text-align: center;
+  background: #3a3a3a;
+  border-radius: 20px;
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.card img {
+  width: 100%;
+}
+
+.card p {
+  color: #fff;
+  background: #2a2a2a;
+  padding: 10px 0;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.card:hover {
+  border: 1px solid #7b00ff;
+  transform: scale(1.10);
+}
+
+.trending-carousel {
+  background: #3a3a3a;
+  padding-bottom: 40px;
+}
+
+.trending-carousel h2 {
+  color: #fff;
+  padding: 30px 20px;
+}
+
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 1250px;
+  overflow: hidden;
+  background: #2a2a2a;
+  border-radius: 20px;
+  margin: 0 auto;
+}
+
+.carousel {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 20px 60px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  margin: 0 60px;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-item {
+  min-width: 300px;
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 20px;
+  scroll-snap-align: start;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.carousel-item img {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.carousel-item:hover {
+  transform: scale(1.05);
+}
+
+.nav {
+  position: absolute;
+  z-index: 10;
+  background: #1a1a1a;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+
+.prev { left: 10px; }
+.next { right: 10px; }
 
 
+.carousel-product {
+  color: #fff;
+  font-size: 20px;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.carousel-item hr {
+  border: 1px solid #3a3a3a;
+}
+
+.carousel-price {
+  padding: 10px 10px;
+  color: #7b00ff;
+  font-size: 20px;
+}
 /* Responsive tweaks */
 
 @media (max-width: 480px) {
