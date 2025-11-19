@@ -1,91 +1,110 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const cartTableBody = document.getElementById('cartItems');
-  const totalAmountEl = document.getElementById('totalAmount');
+(function () {
+    "use strict";
 
-  // Make sure elements exist
-  if (!cartTableBody || !totalAmountEl) return;
+    const safeLog = (...args) => console.log("[cart.js]", ...args);
+    const safeErr = (...args) => console.error("[cart.js]", ...args);
 
-  function renderCart() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cartTableBody.innerHTML = '';
+    document.addEventListener("DOMContentLoaded", () => {
+        safeLog("DOM ready - initializing cart.js");
 
-    if(cart.length === 0){
-      cartTableBody.innerHTML = `<tr><td colspan="5">Your cart is empty</td></tr>`;
-      totalAmountEl.textContent = 'R0.00';
-      return;
-    }
+        /* -------------------- CART FUNCTIONS -------------------- */
 
-    cart.forEach((item, index) => {
-      const price = parseFloat(item.price) || 0;
-      const qty = parseInt(item.qty) || 0;
-      const subtotal = price * qty;
+        function getCart() {
+            return JSON.parse(localStorage.getItem("cart") || "[]");
+        }
 
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${item.name}</td>
-        <td>R${price.toFixed(2)}</td>
-        <td><input type="number" class="quantity" value="${qty}" min="1"></td>
-        <td class="subtotal">R${subtotal.toFixed(2)}</td>
-        <td><button class="remove-btn">X</button></td>
-      `;
-      cartTableBody.appendChild(row);
+        function saveCart(cart) {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { cart } }));
+        }
+
+        function addToCart(product) {
+            const cart = getCart();
+            const existing = cart.find(item => item.id === product.id);
+            if (existing) existing.qty += 1;
+            else cart.push({ ...product, qty: 1 });
+            saveCart(cart);
+            safeLog("Added to cart:", product.name);
+        }
+
+        function removeFromCart(id) {
+            let cart = getCart();
+            cart = cart.filter(item => item.id !== id);
+            saveCart(cart);
+            safeLog("Removed from cart:", id);
+        }
+
+        function clearCart() {
+            saveCart([]);
+            safeLog("Cart cleared");
+        }
+
+        /* -------------------- NAVBAR CART COUNT -------------------- */
+        const cartCountEl = document.getElementById("cartCount");
+        function updateCartCount() {
+            const cart = getCart();
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            if (cartCountEl) cartCountEl.textContent = totalQty;
+        }
+
+        window.addEventListener("cartUpdated", updateCartCount);
+        window.addEventListener("storage", e => { if (e.key === "cart") updateCartCount(); });
+        updateCartCount(); // initial
+
+        /* -------------------- CART PAGE RENDER -------------------- */
+        const cartItemsEl = document.getElementById("cartItems");
+        const totalAmountEl = document.getElementById("totalAmount");
+
+        function renderCartPage() {
+            if (!cartItemsEl || !totalAmountEl) return;
+
+            const cart = getCart();
+            cartItemsEl.innerHTML = ""; // clear table
+
+            let total = 0;
+            cart.forEach(item => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+
+                const tr = document.createElement("tr");
+
+                tr.innerHTML = `
+                    <td>
+                        <img src="${item.image}" alt="${item.name}" style="width:50px; margin-right:10px;">
+                        ${item.name}
+                    </td>
+                    <td>R${item.price.toFixed(2)}</td>
+                    <td>
+                        <input type="number" min="1" value="${item.qty}" style="width:60px;">
+                    </td>
+                    <td>R${subtotal.toFixed(2)}</td>
+                    <td><button class="btn-remove" title="Remove item">&times;</button></td>
+                `;
+
+                // handle qty change
+                const qtyInput = tr.querySelector("input[type='number']");
+                qtyInput.addEventListener("change", (e) => {
+                    let newQty = parseInt(e.target.value);
+                    if (isNaN(newQty) || newQty < 1) newQty = 1;
+                    item.qty = newQty;
+                    saveCart(cart);
+                    renderCartPage();
+                });
+
+                // handle remove button
+                const removeBtn = tr.querySelector(".btn-remove");
+                removeBtn.addEventListener("click", () => {
+                    removeFromCart(item.id);
+                    renderCartPage();
+                });
+
+                cartItemsEl.appendChild(tr);
+            });
+
+            totalAmountEl.textContent = `R${total.toFixed(2)}`;
+        }
+
+        window.addEventListener("cartUpdated", renderCartPage);
+        renderCartPage(); // initial
     });
-
-    updateTotals();
-    attachEvents();
-  }
-
-  function updateTotals() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  let subtotal = 0;
-  cart.forEach(item => {
-    const price = parseFloat(item.price) || 0;
-    const qty = parseInt(item.qty) || 0;
-    subtotal += price * qty;
-  });
-
-  // Delivery fee logic — R83, free for orders ≥ R6000
-  let deliveryFee = subtotal >= 6000 ? 0 : 83;
-  let total = subtotal + deliveryFee;
-
-  // Update totals display
-  const totalAmountEl = document.getElementById('totalAmount');
-  if (totalAmountEl) {
-    totalAmountEl.innerHTML = `
-      <div>Subtotal: R${subtotal.toFixed(2)}</div>
-      <div>Delivery: ${deliveryFee === 0 ? '<span style="color:green;">Free</span>' : 'R' + deliveryFee.toFixed(2)}</div>
-      <hr>
-      <strong>Total: R${total.toFixed(2)}</strong>
-    `;
-  }
-
-  // Store delivery fee for checkout
-  localStorage.setItem('deliveryFee', deliveryFee);
-}
-
-
-  function attachEvents() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    // Quantity change
-    document.querySelectorAll('.quantity').forEach((input,index)=>{
-      input.addEventListener('change', ()=>{
-        if(input.value<1) input.value=1;
-        cart[index].qty = parseInt(input.value);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        renderCart();
-      });
-    });
-
-    // Remove button
-    document.querySelectorAll('.remove-btn').forEach((btn,index)=>{
-      btn.addEventListener('click', ()=>{
-        cart.splice(index,1);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        renderCart();
-      });
-    });
-  }
-
-  renderCart();
-});
+})();

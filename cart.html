@@ -73,7 +73,7 @@
                 <a href="" class="border-right">Register</a>
                 <a href="cart.html">
                     <i class="fa-solid fa-cart-shopping"></i>
-                    <span class="cart-count" id="cartCount">0</span>
+                    <span class="cart-count cart-updated" id="cartCount">0</span>
                 </a>
             </div>
         </section>
@@ -203,7 +203,7 @@
                         Total:
                         <span id="totalAmount">R0.00</span>
                     </h3>
-                    <button class="btn-primary" onclick="window.location.href='checkout.html'">Proceed to
+                    <button class="btn-primary" onclick="window.location.href='checkout.html' " onclick="clearCart()">Proceed to
                         Checkout</button>
                 </div>
             </div>
@@ -255,6 +255,7 @@
     <script src="js/main.js"></script>
     <script src="js/mobile-top-nav.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/shop.js"></script>
 </body>
 
 </html>

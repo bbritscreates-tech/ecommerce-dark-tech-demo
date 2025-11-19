@@ -87,6 +87,12 @@ header {
   padding: 2px 4px;
 }
 
+.cart-count.cart-updated {
+  transform: scale(1.4);
+  transition: transform 0.3s ease;
+}
+
+
 /* Mobile bottom nav */
 .mobile-bottom-nav {
   display: none;
@@ -723,7 +729,7 @@ footer {
   border-radius: 6px;
 }
 
-.cart-table button.remove-btn {
+.cart-table button.btn-remove {
   background: #7b00ff;
   color: #fff;
   border: none;
@@ -732,7 +738,7 @@ footer {
   cursor: pointer;
 }
 
-.cart-table button.remove-btn:hover {
+.cart-table button.btn-remove:hover {
   background: #9b5fff;
 }
 
@@ -886,29 +892,42 @@ footer {
 }
 
 /*Product Pages*/
+.product-main {
+  background: #4a4a4a;
+}
 
 .product-page {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
   margin-bottom: 40px;
+  padding: 0 30px;
+  padding-top: 30px;
 }
 
 /* LEFT MEDIA AREA */
 .product-media .main-media {
   width: 100%;
-  height: 320px;
-  background: #222;
+  height: 370px;              /* your fixed height */
   border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;           /* avoids overflow issues */
+  background: transparent;        /* optional background */
 }
 
-.play-icon {
-  font-size: 40px;
-  opacity: 0.4;
+.main-media img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;                /* prevents stretching horizontally */
+  height: auto;               /* prevents stretching vertically */
+  object-fit: contain;        /* keeps full image inside */
+  border-radius: 12px;
+  display: block;
 }
+
+
 
 .thumbs {
   display: flex;
@@ -927,16 +946,15 @@ footer {
 .product-info .product-title {
   font-size: 32px;
   margin: 0;
-}
-
-.subtitle {
-  opacity: 0.7;
-  margin-bottom: 10px;
+  color: #fff;
+  padding: 25px 0;
+  
 }
 
 .rating {
   font-size: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  color: #fff;
 }
 
 .rating-num {
@@ -944,15 +962,21 @@ footer {
   margin-left: 5px;
 }
 
+.price {
+  padding-bottom: 25px;
+}
+
 .price h2 {
   font-size: 32px;
   margin: 0;
+  color: #7b00ff;
 }
 
 .old-price {
   text-decoration: line-through;
   opacity: 0.5;
   margin: 0;
+  color: #ccc;
 }
 
 .actions {
@@ -970,14 +994,13 @@ footer {
 }
 
 .btn-outline {
-  border: 1px solid #fff;
-  background: transparent;
+  background: #7b00ff;
   color: #fff;
 }
 
 .btn-solid {
-  background: #fff;
-  color: #000;
+  background: #7b00ff;
+  color: #fff;
   border: none;
 }
 
@@ -987,6 +1010,8 @@ footer {
   padding: 25px;
   border-radius: 16px;
   margin-bottom: 40px;
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 .tabs {
@@ -1023,49 +1048,23 @@ footer {
   width: 60%;
 }
 
-.qty-price-row {
-  margin-top: 25px;
-  display: flex;
-  align-items: center;
-  gap: 30px;
-}
-
-.qty-box {
-  background: #222;
-  padding: 10px 20px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.qty-btn {
-  background: none;
-  border: none;
-  font-size: 22px;
-  color: #fff;
-  cursor: pointer;
-}
-
-.side-price h3 {
-  margin: 0;
-}
-
-.add-cart {
-  margin-left: auto;
-}
-
 /* REVIEWS */
+.reviews {
+  padding: 0 30px;
+}
+
 .reviews h2,
 .related h2 {
   font-size: 24px;
   margin-bottom: 25px;
+  color: #fff;
 }
 
 .review-item {
   display: flex;
   align-items: center;
   gap: 20px;
+  color: #fff;
 }
 
 .avatar {
@@ -1092,6 +1091,11 @@ footer {
 }
 
 /* RELATED */
+.related {
+  padding: 30px 30px;
+  
+}
+
 .related-row {
   display: flex;
   gap: 20px;

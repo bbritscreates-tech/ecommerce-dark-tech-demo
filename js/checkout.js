@@ -109,3 +109,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const checkoutForm = document.getElementById("checkoutForm");
+
+  if (checkoutForm) {
+    checkoutForm.addEventListener("submit", (e) => {
+      e.preventDefault(); // stop actual page reload
+
+      // Clear the cart via your global function
+      if (typeof clearCart === "function") {
+        clearCart(); // this triggers cartUpdated
+      }
+
+      // Optionally show a message or redirect
+      alert("Order placed! Thank you for your purchase.");
+
+      // If you want to redirect to a thank-you page instead:
+      // window.location.href = "thank-you.html";
+    });
+  }
+});
