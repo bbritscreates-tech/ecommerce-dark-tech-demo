@@ -758,14 +758,13 @@ footer {
   margin-top: 0.8rem;
 }
 
-
-
 .checkout {
-  margin: 30px 0;
+  background: #4a4a4a;
+  padding: 30px 0;
 }
 
 .checkout .container h2 {
-  color: #222;
+  color: #fff;
   font-size: 40px;
 }
 
@@ -779,8 +778,111 @@ footer {
 
 .checkout .container h3,
 .checkout .container p {
-  color: #222;
+  color: #fff;
   justify-self: center;
+}
+
+.checkout .container {
+  max-width: 700px;
+  margin: auto;
+  background: #2a2a2a;
+  padding: 2em;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+.checkout .container h2 {
+  justify-self: center;
+}
+
+.checkout-items img {
+  width: 60px;
+  border-radius: 5px;
+}
+
+.checkout-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  color: #fff;
+}
+
+.summary-box {
+  margin-top: 1.5em;
+  padding: 1em;
+  background: #3a3a3a;
+  border-radius: 8px;
+  line-height: 1.8em;
+}
+
+.delivery-notice {
+  margin: 1em 0;
+  text-align: center;
+  font-weight: 500;
+  color: #555;
+}
+
+.checkout-form {
+  padding: 15px 0;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+  width: 100%;
+  margin: 1em 0;
+  padding: 0.8em;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.payment-head {
+  padding-top: 15px;
+}
+
+/* Payment Section Container */
+.payment-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 1em 0 2em;
+  justify-content: center;
+}
+
+/* Individual Payment Card */
+.payment-options label {
+  background: #f7f7f7;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 0.8em 1.4em;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 140px;
+  text-align: center;
+}
+
+/* Radio Buttons Hidden */
+.payment-options input[type="radio"] {
+  display: none;
+}
+
+/* Hover Effect */
+.payment-options label:hover {
+  background: #9b5fff;
+  border-color: #7b00ff;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Selected (Checked) Style */
+.payment-options input[type="radio"]:checked + label {
+  background: #7da97c;
+  color: #fff;
+  border-color: #658b5d;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.03);
 }
 
 
