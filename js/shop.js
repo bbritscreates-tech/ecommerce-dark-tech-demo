@@ -1,319 +1,353 @@
-// shop.js - single self-contained file with defensive checks + logs
+// shop.js - rewritte/clean version matched to your sidebar structure
 (function () {
-  try {
-    console.log("shop.js starting...");
+  "use strict";
 
-    // Wait for DOM ready
-    document.addEventListener("DOMContentLoaded", () => {
-      console.log("DOM ready - initializing shop.js");
+  function safeLog(...args) { console.log("[shop.js]", ...args); }
+  function safeWarn(...args) { console.warn("[shop.js]", ...args); }
+  function safeErr(...args) { console.error("[shop.js]", ...args); }
 
-      // Basic guards
-      const products = Array.from(document.querySelectorAll(".product-card"));
-      if (!products.length) console.warn("No .product-card elements found.");
+  document.addEventListener("DOMContentLoaded", () => {
+    safeLog("DOM ready - initializing shop.js");
 
-      /* -------------------- CART -------------------- */
-      try {
-        if (!localStorage.getItem("cart")) localStorage.setItem("cart", JSON.stringify([]));
-        products.forEach(product => {
-          const addBtn = product.querySelector(".btn-add");
-          if (!addBtn) return;
-          addBtn.addEventListener("click", () => {
-            try {
-              const id = product.querySelector("a")?.getAttribute("href") || product.dataset.id || product.querySelector("h3")?.textContent;
-              const name = product.querySelector("h3")?.textContent || "Unnamed";
-              const priceText = product.querySelector("p")?.textContent || "R0";
-              const price = parseFloat(priceText.replace(/[^0-9.-]+/g, "")) || 0;
-              const image = product.querySelector("img")?.src || "";
+    /* -------------------- ELEMENTS -------------------- */
+    const productCards = Array.from(document.querySelectorAll(".product-card"));
+    const sidebar = document.querySelector(".sidebar");
+    const productGrid = document.querySelector(".product-grid");
 
-              let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-              const existing = cart.find(item => item.id === id);
-              if (existing) existing.qty += 1;
-              else cart.push({ id, name, price, qty: 1, image });
+    if (!productGrid) safeWarn("No .product-grid found on page.");
+    if (!sidebar) safeWarn("No .sidebar found on page.");
+    if (!productCards.length) safeWarn("No .product-card elements found.");
 
-              localStorage.setItem("cart", JSON.stringify(cart));
-              console.log("Added to cart:", name, "Cart now:", cart);
-              // avoid alert spam in dev; uncomment if you want:
-              // alert(`${name} added to cart!`);
-            } catch (err) {
-              console.error("Error adding to cart:", err);
-            }
-          });
+    /* -------------------- CART (localStorage) -------------------- */
+    try {
+      if (!localStorage.getItem("cart")) localStorage.setItem("cart", JSON.stringify([]));
+      productCards.forEach(card => {
+        const addBtn = card.querySelector(".btn-add");
+        if (!addBtn) return;
+        addBtn.addEventListener("click", (ev) => {
+          try {
+            const id = card.dataset.id || card.querySelector("a")?.getAttribute("href") || card.querySelector("h3")?.textContent || `prod-${Date.now()}`;
+            const name = card.querySelector("h3")?.textContent || "Unnamed";
+            const price = parseFloat((card.dataset.price || "0").toString().replace(/[^0-9.-]+/g, "")) || 0;
+            const image = card.querySelector("img")?.src || "";
+
+            let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+            const existing = cart.find(i => i.id === id);
+            if (existing) existing.qty += 1;
+            else cart.push({ id, name, price, qty: 1, image });
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+            safeLog("Added to cart:", name, cart);
+            // you could update cart UI here if you have one
+          } catch (err) {
+            safeErr("Error adding to cart:", err);
+          }
         });
-      } catch (err) {
-        console.error("Cart init error:", err);
-      }
+      });
+    } catch (err) {
+      safeErr("Cart init error:", err);
+    }
 
-      /* -------------------- CATEGORY + DROPDOWN (NEW CLEAN VERSION) -------------------- */
-      /* ====== Sidebar filtering (delegation) ====== */
-      (function () {
-        try {
-          const sidebar = document.querySelector('.sidebar');
-          const productGrid = document.querySelector('.product-grid');
-          const productCards = Array.from(document.querySelectorAll('.product-card'));
+    /* -------------------- WISHLIST (localStorage) -------------------- */
+    try {
+      const wishlistIcons = Array.from(document.querySelectorAll(".wishlist-icon"));
+      let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
 
-          if (!sidebar) throw new Error('Sidebar element not found.');
-          if (!productGrid) throw new Error('Product grid not found.');
+      wishlistIcons.forEach(icon => {
+        const card = icon.closest(".product-card");
+        if (!card) return;
+        const productId = card.dataset.id;
+        if (wishlist.some(item => item.id === productId)) icon.classList.add("active");
 
-          // Utility: show/hide cards by category string or array
-          function filterProducts(category) {
-            productCards.forEach(card => {
-              const cardCat = card.dataset.category || '';
-              if (category === 'all') {
-                card.style.display = '';
-              } else if (Array.isArray(category)) {
-                card.style.display = category.includes(cardCat) ? '' : 'none';
-              } else {
-                card.style.display = (cardCat === category) ? '' : 'none';
-              }
-            });
+        icon.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+          const exists = wishlist.some(item => item.id === productId);
+          if (exists) {
+            wishlist = wishlist.filter(item => item.id !== productId);
+            icon.classList.remove("active");
+          } else {
+            const name = card.querySelector("h3")?.textContent || "Unnamed";
+            const price = card.querySelector("p")?.textContent || "";
+            const image = card.querySelector("img")?.src || "";
+            wishlist.push({ id: productId, name, price, image });
+            icon.classList.add("active");
           }
-
-          function clearActive() {
-            sidebar.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-          }
-
-          function closeOtherDropdowns(keep = null) {
-            sidebar.querySelectorAll('.has-dropdown').forEach(d => {
-              if (d !== keep) d.classList.remove('open');
-            });
-          }
-
-          // Helper: return array of child category names for a parent li.has-dropdown
-          function getChildCategories(parentLi) {
-            return Array.from(parentLi.querySelectorAll('.dropdown li[data-category]'))
-              .map(li => li.dataset.category)
-              .filter(Boolean);
-          }
-
-          // Delegated click listener
-          sidebar.addEventListener('click', function (e) {
-            const clickedLi = e.target.closest('li[data-category]');
-            if (!clickedLi) {
-              return; // clicked outside category items
-            }
-
-            // Is the clicked li a subcategory inside a dropdown?
-            const insideDropdown = !!clickedLi.closest('.dropdown');
-
-            if (insideDropdown) {
-              // Subcategory clicked (e.g. gaming-laptops)
-              const cat = clickedLi.dataset.category;
-              clearActive();
-              clickedLi.classList.add('active');
-
-              const parent = clickedLi.closest('.has-dropdown');
-              if (parent) {
-                parent.classList.add('open');       // ensure parent dropdown is open
-                parent.classList.add('active');     // show context
-                closeOtherDropdowns(parent);
-              } else {
-                closeOtherDropdowns(null);
-              }
-
-              filterProducts(cat);
-              return;
-            }
-
-            // Not inside a dropdown -> could be parent has-dropdown OR top-level item like "All" or "Monitors"
-            if (clickedLi.classList.contains('has-dropdown')) {
-              // Parent label/caret clicked (e.g. Laptops, Chairs, Accessories)
-              const parent = clickedLi;
-              const childCats = getChildCategories(parent);
-
-              // Toggle open state for this parent and close others
-              const isOpen = parent.classList.toggle('open');
-              clearActive();
-              parent.classList.add('active');
-              closeOtherDropdowns(parent);
-
-              // When parent clicked, show ALL its child categories (if any)
-              if (childCats.length) {
-                filterProducts(childCats);
-              } else {
-                // fallback: if parent has no children, filter by parent's own category
-                filterProducts(parent.dataset.category || 'all');
-              }
-              return;
-            }
-
-            // Otherwise it's a plain top-level category item (e.g. All, Monitors)
-            const cat = clickedLi.dataset.category;
-            clearActive();
-            clickedLi.classList.add('active');
-            closeOtherDropdowns(null);
-
-            if (cat === 'all') {
-              filterProducts('all');
-            } else {
-              // top-level category (monitors etc.)
-              filterProducts(cat);
-            }
-          });
-
-          // INITIAL: respect .active if present, otherwise show all
-          const initial = sidebar.querySelector('li.active')?.dataset?.category || 'all';
-
-          if (initial === 'all') filterProducts('all');
-          else {
-            // If initial selection is a parent that has children, show children
-            const initialLi = sidebar.querySelector(`li[data-category="${initial}"]`);
-            if (initialLi?.classList.contains('has-dropdown')) {
-              const childCats = getChildCategories(initialLi);
-              if (childCats.length) filterProducts(childCats);
-              else filterProducts(initial);
-            } else {
-              filterProducts(initial);
-            }
-          }
-
-        } catch (err) {
-          console.error('Sidebar filter error:', err);
-        }
-
-        
-      })();
-
-
-
-
-
-      /* -------------------- WISHLIST -------------------- */
-      try {
-        const wishlistIcons = Array.from(document.querySelectorAll(".wishlist-icon"));
-        let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-
-        wishlistIcons.forEach(icon => {
-          const card = icon.closest(".product-card");
-          if (!card) return;
-          const productId = card.dataset.id;
-          if (wishlist.some(item => item.id === productId)) icon.classList.add("active");
-
-          icon.addEventListener("click", (ev) => {
-            ev.stopPropagation();
-            const productName = card.querySelector("h3")?.textContent || "Unnamed";
-            const productPrice = card.querySelector("p")?.textContent || "R0";
-            const productImage = card.querySelector("img")?.src || "";
-
-            wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-            const exists = wishlist.some(item => item.id === productId);
-            if (exists) {
-              wishlist = wishlist.filter(item => item.id !== productId);
-              icon.classList.remove("active");
-            } else {
-              wishlist.push({ id: productId, name: productName, price: productPrice, image: productImage });
-              icon.classList.add("active");
-            }
-            localStorage.setItem("wishlist", JSON.stringify(wishlist));
-            window.dispatchEvent(new Event("wishlistUpdated"));
-            console.log("Wishlist now:", wishlist);
-          });
+          localStorage.setItem("wishlist", JSON.stringify(wishlist));
+          window.dispatchEvent(new Event("wishlistUpdated"));
+          safeLog("Wishlist updated", wishlist);
         });
-      } catch (err) {
-        console.error("Wishlist error:", err);
-      }
+      });
+    } catch (err) {
+      safeErr("Wishlist error:", err);
+    }
 
-      /* -------------------- RECENTLY VIEWED -------------------- */
-      try {
-        const links = Array.from(document.querySelectorAll(".product-card a"));
-        links.forEach(link => {
-          link.addEventListener("click", () => {
-            const productName = link.querySelector("h3")?.textContent || "Unknown Product";
+    /* -------------------- RECENTLY VIEWED -------------------- */
+    try {
+      const links = Array.from(document.querySelectorAll(".product-card a"));
+      links.forEach(link => {
+        link.addEventListener("click", () => {
+          try {
+            const name = link.querySelector("h3")?.textContent || "Unknown Product";
             let viewed = JSON.parse(localStorage.getItem("recentlyViewed") || "[]");
-            viewed = viewed.filter(item => item !== productName);
-            viewed.unshift(productName);
+            viewed = viewed.filter(item => item !== name);
+            viewed.unshift(name);
             if (viewed.length > 5) viewed.pop();
             localStorage.setItem("recentlyViewed", JSON.stringify(viewed));
-          });
+          } catch (err) {
+            safeErr("RecentlyViewed handler error:", err);
+          }
         });
-      } catch (err) {
-        console.error("RecentlyViewed error:", err);
-      }
-
-      /* -------------------- PRODUCT FILTERING -------------------- */
-      try {
-        /* -------------------- APPLY FILTERS -------------------- */
-try {
-    const applyBtn = document.getElementById("applyFilters");
-    const minPrice = document.getElementById("minPrice");
-    const maxPrice = document.getElementById("maxPrice");
-    const brandFilter = document.getElementById("brandFilter");
-    const screenFilter = document.getElementById("screenFilter");
-    const allCards = Array.from(document.querySelectorAll(".product-card"));
-
-    function applyFilters() {
-        const min = parseFloat(minPrice.value) || 0;
-        const max = parseFloat(maxPrice.value) || Infinity;
-        const brand = brandFilter.value;
-        const screen = screenFilter.value;
-
-        allCards.forEach(card => {
-            const price = parseFloat(card.dataset.price);
-            const cardBrand = card.dataset.brand;
-            const cardScreen = card.dataset.screen;
-
-            let show = true;
-
-            if (price < min || price > max) show = false;
-            if (brand && brand !== cardBrand) show = false;
-            if (screen && screen !== cardScreen) show = false;
-
-            card.style.display = show ? "" : "none";
-        });
-
-        console.log("Filters applied");
+      });
+    } catch (err) {
+      safeErr("RecentlyViewed error:", err);
     }
 
-    applyBtn?.addEventListener("click", applyFilters);
+    /* -------------------- SIDEBAR FILTERING (delegated) -------------------- */
+    (function setupSidebarFiltering() {
+      if (!sidebar) return;
 
-} catch (err) {
-    console.error("Filter system fixed error:", err);
-}
+      const allCards = Array.from(document.querySelectorAll(".product-card"));
 
+      function showAll() {
+        allCards.forEach(c => (c.style.display = ""));
+      }
 
-        function clearFilters() {
-          filterPrice.value = "";
-          filterBrand.value = "all";
-          filterSize.value = "all";
+      function filterByCategory(catOrArray) {
+        if (!allCards.length) return;
+        if (catOrArray === "all") {
+          showAll();
+          return;
+        }
+        if (Array.isArray(catOrArray)) {
+          const allowance = catOrArray.map(s => (s || "").toLowerCase());
+          allCards.forEach(card => {
+            const c = (card.dataset.category || "").toLowerCase();
+            card.style.display = allowance.includes(c) ? "" : "none";
+          });
+          return;
+        }
+        const wanted = (catOrArray || "").toLowerCase();
+        allCards.forEach(card => {
+          const c = (card.dataset.category || "").toLowerCase();
+          card.style.display = c === wanted ? "" : "none";
+        });
+      }
 
-          allCards.forEach(card => (card.style.display = ""));
-          console.log("Filters cleared");
+      function clearActive() {
+        sidebar.querySelectorAll("li").forEach(li => li.classList.remove("active"));
+      }
+
+      function closeOtherDropdowns(keep = null) {
+        sidebar.querySelectorAll(".has-dropdown").forEach(d => {
+          if (d !== keep) d.classList.remove("open");
+        });
+      }
+
+      function getChildCategories(parentLi) {
+        if (!parentLi) return [];
+        return Array.from(parentLi.querySelectorAll(".dropdown li[data-category]"))
+          .map(li => li.dataset.category)
+          .filter(Boolean);
+      }
+
+      // Delegated click handler
+      sidebar.addEventListener("click", function (e) {
+        const clicked = e.target.closest("li[data-category]");
+        if (!clicked) return;
+
+        const insideDropdown = !!clicked.closest(".dropdown");
+
+        if (insideDropdown) {
+          // subcategory clicked
+          const cat = clicked.dataset.category;
+          clearActive();
+          clicked.classList.add("active");
+
+          const parent = clicked.closest(".has-dropdown");
+          if (parent) {
+            parent.classList.add("open", "active");
+            closeOtherDropdowns(parent);
+          } else {
+            closeOtherDropdowns(null);
+          }
+          filterByCategory(cat);
+          return;
         }
 
-        applyBtn?.addEventListener("click", applyFilters);
-        clearBtn?.addEventListener("click", clearFilters);
+        // parent or top-level clicked
+        if (clicked.classList.contains("has-dropdown")) {
+          const parent = clicked;
+          const childCats = getChildCategories(parent);
 
-      } catch (err) {
-        console.error("Filter system error:", err);
+          const isNowOpen = parent.classList.toggle("open");
+          clearActive();
+          parent.classList.add("active");
+          closeOtherDropdowns(parent);
+
+          if (childCats.length) {
+            filterByCategory(childCats);
+          } else {
+            filterByCategory(parent.dataset.category || "all");
+          }
+          return;
+        }
+
+        // plain top-level (e.g. All, Monitors)
+        const cat = clicked.dataset.category;
+        clearActive();
+        clicked.classList.add("active");
+        closeOtherDropdowns(null);
+
+        if (cat === "all") filterByCategory("all");
+        else filterByCategory(cat);
+      });
+
+      // INITIAL: respect .active if present
+      const initial = sidebar.querySelector("li.active")?.dataset?.category || "all";
+      if (initial === "all") filterByCategory("all");
+      else {
+        const initialLi = sidebar.querySelector(`li[data-category="${initial}"]`);
+        if (initialLi?.classList.contains("has-dropdown")) {
+          const children = getChildCategories(initialLi);
+          if (children.length) filterByCategory(children);
+          else filterByCategory(initial);
+        } else filterByCategory(initial);
       }
 
-      /* --------- FILTER PANEL TOGGLE --------- */
-try {
-    const filterToggle = document.getElementById("filterToggle");
-    const filterPanel = document.getElementById("filterPanel");
+      safeLog("Sidebar filtering initialized.");
+    })();
 
-    if (filterToggle && filterPanel) {
-        filterToggle.addEventListener("click", (e) => {
+    /* -------------------- FILTER PANEL TOGGLE + APPLY FILTERS -------------------- */
+    (function setupFilterPanelAndFilters() {
+      const filterToggle = document.getElementById("filterToggle");
+      const filterPanel = document.getElementById("filterPanel");
+      const applyBtn = document.getElementById("applyFilters");
+      const minPriceInput = document.getElementById("minPrice");
+      const maxPriceInput = document.getElementById("maxPrice");
+      const brandFilter = document.getElementById("brandFilter");
+      const screenFilter = document.getElementById("screenFilter");
+
+      // safe fallback selectors
+      const allCards = Array.from(document.querySelectorAll(".product-card"));
+
+      // Toggle panel
+      try {
+        if (filterToggle && filterPanel) {
+          filterToggle.addEventListener("click", (e) => {
             e.stopPropagation();
-            filterPanel.style.display =
-                filterPanel.style.display === "block" ? "none" : "block";
-        });
+            // toggle display (use block to show)
+            filterPanel.style.display = (filterPanel.style.display === "block") ? "none" : "block";
+          });
 
-        // close when clicking outside
-        document.addEventListener("click", (e) => {
-            if (!filterPanel.contains(e.target) && e.target !== filterToggle) {
-                filterPanel.style.display = "none";
+          // click outside closes
+          document.addEventListener("click", (e) => {
+            if (filterPanel.style.display === "block" && !filterPanel.contains(e.target) && e.target !== filterToggle) {
+              filterPanel.style.display = "none";
             }
+          });
+        }
+      } catch (err) {
+        safeErr("Filter panel toggle error:", err);
+      }
+
+      // Apply filter function
+      function applyFilters() {
+        try {
+          const min = parseFloat(minPriceInput?.value) || 0;
+          const max = parseFloat(maxPriceInput?.value);
+          const maxVal = (isNaN(max) || max === 0) ? Infinity : max;
+          const brand = (brandFilter?.value || "").trim();
+          const screen = (screenFilter?.value || "").trim();
+
+          allCards.forEach(card => {
+            const price = parseFloat(card.dataset.price || "0") || 0;
+            const cardBrand = (card.dataset.brand || "").trim();
+            const cardScreen = (card.dataset.screen || "").trim();
+
+            let show = true;
+            if (price < min || price > maxVal) show = false;
+            if (brand && brand !== "" && brand !== cardBrand) show = false;
+            if (screen && screen !== "" && screen !== cardScreen) show = false;
+
+            card.style.display = show ? "" : "none";
+          });
+
+          safeLog("Filters applied", { min, maxVal, brand, screen });
+        } catch (err) {
+          safeErr("applyFilters error:", err);
+        }
+      }
+
+      // hook up apply button
+      if (applyBtn) applyBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        applyFilters();
+      });
+
+      safeLog("Filter panel and controls initialized.");
+    })();
+
+    /* -------------------- URL category support (robust) -------------------- */
+    (function applyCategoryFromURL() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const requested = params.get("category");
+        if (!requested) {
+          safeLog("No category query param present.");
+          return;
+        }
+        safeLog("Category param detected:", requested);
+
+        // 1) try to find exact data-category match
+        let target = document.querySelector(`.sidebar li[data-category="${requested}"]`);
+
+        // 2) try to find case-insensitive or text match fallback
+        if (!target) {
+          const lower = requested.toLowerCase();
+          const candidates = Array.from(document.querySelectorAll(".sidebar li[data-category]"));
+          target = candidates.find(li => {
+            const cat = ((li.dataset.category || "") + "").toLowerCase();
+            const txt = (li.textContent || "").toLowerCase();
+            return cat === lower || txt.includes(lower) || cat.includes(lower);
+          });
+        }
+
+        if (target) {
+          safeLog("Found sidebar item for URL category, simulating click:", target.dataset.category || target.textContent.trim());
+          // Ensure parent dropdown is visible if it's a nested child
+          const parent = target.closest(".has-dropdown");
+          if (parent) parent.classList.add("open", "active");
+
+          // trigger the delegated handler by dispatching a click
+          target.click();
+          return;
+        }
+
+        // 3) fallback: direct filter the product cards by dataset.category (loose match)
+        safeWarn("No matching sidebar item for category param. Falling back to direct product filtering.");
+        const allCards = Array.from(document.querySelectorAll(".product-card"));
+        const wanted = requested.toLowerCase();
+
+        // also try to detect children of a parent sidebar (e.g. ?category=laptops should show normal & gaming)
+        let childCats = [];
+        const parentLi = document.querySelector(`.sidebar li.has-dropdown[data-category="${requested}"]`);
+        if (parentLi) {
+          childCats = Array.from(parentLi.querySelectorAll(".dropdown li[data-category]")).map(li => (li.dataset.category || "").toLowerCase());
+        }
+
+        allCards.forEach(card => {
+          const cardCat = (card.dataset.category || "").toLowerCase();
+          const show = cardCat === wanted || cardCat.includes(wanted) || childCats.includes(cardCat);
+          card.style.display = show ? "" : "none";
         });
-    }
-} catch (err) {
-    console.error("Filter panel toggle error:", err);
-}
 
+        safeLog("Direct fallback applied for category:", requested, "childCats:", childCats);
+      } catch (err) {
+        safeErr("applyCategoryFromURL error:", err);
+      }
+    })();
 
-
-      console.log("shop.js initialisation complete.");
-    });
-  } catch (err) {
-    console.error("shop.js top-level error:", err);
-  }
+    safeLog("shop.js initialization complete.");
+  });
 })();
