@@ -1,133 +1,88 @@
-// Run after the page loads
-document.addEventListener("DOMContentLoaded", () => {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const orderList = JSON.parse(localStorage.getItem("orders")) || [];
-  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-  const checkoutForm = document.getElementById("checkoutForm");
-  const cartContainer = document.getElementById("checkout-items");
-  const summarySubtotal = document.getElementById("summary-subtotal");
-  const summaryDelivery = document.getElementById("summary-delivery");
-  const summaryTotal = document.getElementById("summary-total");
-
-  // Redirect if no cart or empty
-  if (!cart.length) {
-    if (cartContainer) {
-      cartContainer.innerHTML = "<p>Your cart is empty.</p>";
-    }
-    if (checkoutForm) {
-      checkoutForm.style.display = "none";
-    }
+document.addEventListener('DOMContentLoaded', () => {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser) {
+    alert('Please log in first!');
+    window.location.href = 'login.html';
     return;
   }
 
-  // Calculate subtotal, delivery, total
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const deliveryFee = subtotal >= 6000 ? 0 : 83;
-  const total = subtotal + deliveryFee;
+  // ====== FILL USER INFO ======
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const phoneInput = document.getElementById('phone');
+  const checkoutAddress = document.getElementById('checkoutAddress');
 
-  // Store delivery fee for reference
-  localStorage.setItem("deliveryFee", deliveryFee);
+  if (nameInput) nameInput.value = currentUser.name;
+  if (emailInput) emailInput.value = currentUser.email;
 
-  // Display cart items on checkout page
-  if (cartContainer) {
-    cartContainer.innerHTML = cart
-      .map(
-        (item) => `
-        <div class="checkout-item">
-          <img src="${item.image}" alt="${item.name}">
-          <div class="item-info">
-            <h4>${item.name}</h4>
-            <p>Qty: ${item.qty}</p>
-            <p>Price: R${item.price.toFixed(2)}</p>
-          </div>
-          <p class="item-total">R${(item.price * item.qty).toFixed(2)}</p>
-        </div>
-      `
-      )
-      .join("");
+  // ====== LOAD ADDRESSES ======
+  const addressList = JSON.parse(localStorage.getItem('addresses')) || [];
+  const userAddresses = addressList.filter(a => a.userEmail === currentUser.email);
+
+  if (checkoutAddress) {
+    checkoutAddress.innerHTML = userAddresses.length
+      ? userAddresses.map(a => `<option value="${a.line1}|${a.line2}|${a.city}|${a.postal}">${a.label} - ${a.line1}, ${a.city}</option>`).join('')
+      : '<option disabled>No addresses saved</option>';
   }
 
-  // Update totals in the summary section
-  if (summarySubtotal) summarySubtotal.textContent = "R" + subtotal.toFixed(2);
-  if (summaryDelivery)
-    summaryDelivery.textContent =
-      deliveryFee === 0 ? "Free" : "R" + deliveryFee.toFixed(2);
-  if (summaryTotal) summaryTotal.textContent = "R" + total.toFixed(2);
+  // ====== LOAD CART ======
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const checkoutItems = document.getElementById('checkout-items');
+  const subtotalElem = document.getElementById('summary-subtotal');
+  const deliveryElem = document.getElementById('summary-delivery');
+  const totalElem = document.getElementById('summary-total');
 
-  // Handle checkout form submission
-  if (checkoutForm) {
-    checkoutForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const address = document.getElementById("address").value.trim();
-      const paymentMethod = document.querySelector(
-        'input[name="payment"]:checked'
-      )?.value;
-
-      if (!address || !paymentMethod) {
-        alert("Please fill in all required fields.");
-        return;
-      }
-
-      // Create new order object
-      const newOrder = {
-        id: Date.now(),
-        date: new Date().toLocaleString(),
-        items: cart,
-        subtotal: subtotal.toFixed(2),
-        deliveryFee: deliveryFee.toFixed(2),
-        total: total.toFixed(2),
-        address,
-        paymentMethod,
-        status: "Processing",
-      };
-
-      // Save to localStorage
-      orderList.push(newOrder);
-      localStorage.setItem("orders", JSON.stringify(orderList));
-
-      // Clear cart after successful checkout
-      localStorage.removeItem("cart");
-      localStorage.removeItem("deliveryFee");
-
-      // Confirmation message
-      alert("✅ Your order has been placed successfully!");
-      window.location.href = "account.html?view=orders";
-    });
-  }
-
-  // Show delivery message if applicable
-  const deliveryNotice = document.getElementById("delivery-notice");
-  if (deliveryNotice) {
-    if (subtotal >= 6000) {
-      deliveryNotice.textContent = "🎉 You qualify for free delivery!";
-      deliveryNotice.style.color = "green";
+  let subtotal = 0;
+  if (checkoutItems) {
+    if (cart.length === 0) {
+      checkoutItems.innerHTML = '<p>Your cart is empty.</p>';
     } else {
-      const diff = (6000 - subtotal).toFixed(2);
-      deliveryNotice.textContent = `Spend R${diff} more for free delivery!`;
-      deliveryNotice.style.color = "#555";
+      checkoutItems.innerHTML = cart.map(item => {
+        subtotal += item.price * item.quantity;
+        return `<div class="checkout-item">
+                  <p>${item.name} x ${item.quantity} - R${(item.price * item.quantity).toFixed(2)}</p>
+                </div>`;
+      }).join('');
     }
   }
-});
 
+  const delivery = subtotal > 0 ? 100 : 0;
+  const total = subtotal + delivery;
 
-document.addEventListener("DOMContentLoaded", () => {
-  const checkoutForm = document.getElementById("checkoutForm");
+  if (subtotalElem) subtotalElem.textContent = `R${subtotal.toFixed(2)}`;
+  if (deliveryElem) deliveryElem.textContent = `R${delivery.toFixed(2)}`;
+  if (totalElem) totalElem.textContent = `R${total.toFixed(2)}`;
 
-  if (checkoutForm) {
-    checkoutForm.addEventListener("submit", (e) => {
-      e.preventDefault(); // stop actual page reload
+  // ====== CHECKOUT SUBMIT ======
+  document.getElementById('checkoutForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!cart.length) {
+      alert('Your cart is empty!');
+      return;
+    }
 
-      // Clear the cart via your global function
-      if (typeof clearCart === "function") {
-        clearCart(); // this triggers cartUpdated
-      }
+    const payment = document.querySelector('input[name="payment"]:checked')?.value;
+    if (!payment) {
+      alert('Please select a payment method');
+      return;
+    }
 
-      // Optionally show a message or redirect
-      alert("Order placed! Thank you for your purchase.");
+    // Save order
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const newOrder = {
+      id: 'ORD' + Date.now(),
+      userEmail: currentUser.email,
+      items: cart,
+      total,
+      date: new Date().toLocaleString(),
+      payment
+    };
+    orders.push(newOrder);
+    localStorage.setItem('orders', JSON.stringify(orders));
 
-      // If you want to redirect to a thank-you page instead:
-      // window.location.href = "thank-you.html";
-    });
-  }
+    // Clear cart
+    localStorage.setItem('cart', JSON.stringify([]));
+    alert('Order placed successfully!');
+    window.location.href = 'account.html';
+  });
 });

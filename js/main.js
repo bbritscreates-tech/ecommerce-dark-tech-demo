@@ -1,3 +1,4 @@
+// ================= MENU / SUBMENU =================
 const menuBtn = document.getElementById('menu-btn');
 const dropdown = document.getElementById('dropdown-menu');
 const overlay = document.getElementById('overlay');
@@ -8,7 +9,7 @@ const icon = menuBtn.querySelector('i');
 
 let hideTimer = null;
 const HIDE_DELAY = 200;
-const GAP_FROM_EDGE = 20; // px gap from viewport edge
+const GAP_FROM_EDGE = 20;
 
 function clampWidth(w) {
   const maxAllowed = Math.max(200, window.innerWidth - GAP_FROM_EDGE * 2);
@@ -16,7 +17,6 @@ function clampWidth(w) {
 }
 
 function measureIntrinsicWidth(el) {
-  // Create an off-screen clone to measure intrinsic width without layout constraints.
   const clone = el.cloneNode(true);
   const style = clone.style;
   style.position = 'absolute';
@@ -26,15 +26,9 @@ function measureIntrinsicWidth(el) {
   style.maxWidth = 'none';
   style.visibility = 'hidden';
   style.display = 'block';
-  // ensure grid keeps its internal sizing
   const gridChildren = clone.querySelectorAll('.submenu-grid, .submenu-card');
-  gridChildren.forEach(n => {
-    // remove any 1fr style that could rely on container by ensuring width auto
-    n.style.width = 'auto';
-  });
-
+  gridChildren.forEach(n => n.style.width = 'auto');
   document.body.appendChild(clone);
-  // force layout
   const measured = clone.getBoundingClientRect().width;
   document.body.removeChild(clone);
   return measured;
@@ -58,17 +52,12 @@ function closeAll() {
 }
 
 menuBtn.addEventListener('click', () => {
-  if (dropdown.classList.contains('active')) {
-    closeAll();
-  } else {
-    openMainMenu();
-  }
+  if (dropdown.classList.contains('active')) closeAll();
+  else openMainMenu();
 });
-
 
 overlay.addEventListener('click', closeAll);
 
-// Show submenu on hover (or pointerenter)
 menuItems.forEach(item => {
   item.addEventListener('pointerenter', () => {
     clearTimeout(hideTimer);
@@ -76,45 +65,25 @@ menuItems.forEach(item => {
     const target = document.getElementById(targetId);
     if (!target) return;
 
-    // remove active from others first
     submenus.forEach(s => s.classList.remove('active'));
-    // activate target submenu and container (so visual state changes immediately)
     target.classList.add('active');
     submenuContainer.classList.add('active');
 
-    // Use RAF to let the class apply (not strictly necessary due to clone, but keeps smoothness)
     requestAnimationFrame(() => {
-      // measure intrinsic width via clone (unaffected by current container size)
       let measuredWidth = measureIntrinsicWidth(target);
-
-      // add submenuContainer horizontal paddings to measured width
       const comp = window.getComputedStyle(submenuContainer);
-      const padLeft = parseFloat(comp.paddingLeft) || 0;
-      const padRight = parseFloat(comp.paddingRight) || 0;
-      measuredWidth += padLeft + padRight;
-
-      // clamp to viewport and set
-      measuredWidth = clampWidth(measuredWidth);
-      submenuContainer.style.width = measuredWidth + 'px';
+      measuredWidth += (parseFloat(comp.paddingLeft) || 0) + (parseFloat(comp.paddingRight) || 0);
+      submenuContainer.style.width = clampWidth(measuredWidth) + 'px';
     });
   });
 });
 
-// Keep submenu open while hovering either panel
-[dropdown, submenuContainer].forEach(el => {
-  el.addEventListener('pointerenter', () => clearTimeout(hideTimer));
-});
+[dropdown, submenuContainer].forEach(el => el.addEventListener('pointerenter', () => clearTimeout(hideTimer)));
 
-// Hide when pointer leaves both panels (with delay)
 document.addEventListener('pointermove', e => {
-  // if pointer inside dropdown or submenu-container, ignore
   const insideDropdown = !!e.target.closest && e.target.closest('#dropdown-menu');
   const insideSubmenu = !!e.target.closest && e.target.closest('.submenu-container');
-  if (insideDropdown || insideSubmenu) {
-    clearTimeout(hideTimer);
-    return;
-  }
-  // otherwise schedule hide
+  if (insideDropdown || insideSubmenu) return;
   clearTimeout(hideTimer);
   hideTimer = setTimeout(() => {
     submenuContainer.classList.remove('active');
@@ -123,20 +92,134 @@ document.addEventListener('pointermove', e => {
   }, HIDE_DELAY);
 });
 
-// Close with Escape
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeAll();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
 
-// Recompute on resize (keeps width sensible if user resizes window while open)
 window.addEventListener('resize', () => {
   const active = document.querySelector('.submenu.active');
   if (!active) return;
-  // measure again
   requestAnimationFrame(() => {
     let w = measureIntrinsicWidth(active);
     const comp = window.getComputedStyle(submenuContainer);
     w += (parseFloat(comp.paddingLeft) || 0) + (parseFloat(comp.paddingRight) || 0);
     submenuContainer.style.width = clampWidth(w) + 'px';
   });
+});
+
+// ================= ACCOUNT / DASHBOARD / TABS =================
+document.addEventListener('DOMContentLoaded', () => {
+  const accountLink = document.getElementById('accountLink');
+  const cartCountEl = document.getElementById('cartCount');
+
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+  // Account link behavior
+  if (accountLink) {
+    accountLink.addEventListener('click', e => {
+      e.preventDefault();
+      if (loggedInUser) window.location.href = 'account.html';
+      else window.location.href = 'login.html';
+    });
+    if (loggedInUser) accountLink.title = `Logged in as ${loggedInUser.firstName}`;
+  }
+
+  // Update cart count
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cartCountEl) cartCountEl.textContent = cart.length;
+  }
+  updateCartCount();
+
+  // Wishlist rendering
+  function renderWishlist() {
+    const wishlistContainer = document.getElementById("wishlistContainer");
+    if (!wishlistContainer) return;
+    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    if (wishlist.length === 0) {
+      wishlistContainer.innerHTML = "<p>Your wishlist is empty.</p>";
+      return;
+    }
+    wishlistContainer.innerHTML = wishlist.map(item => `
+      <div class="wishlist-item">
+        <img src="${item.image}" alt="${item.name}">
+        <div class="wishlist-info">
+          <h4>${item.name}</h4>
+          <p>R${item.price}</p>
+          <button class="remove-wishlist" data-id="${item.id}">Remove</button>
+        </div>
+      </div>
+    `).join("");
+    document.querySelectorAll(".remove-wishlist").forEach(btn => {
+      btn.addEventListener("click", () => {
+        let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        wishlist = wishlist.filter(i => i.id !== btn.dataset.id);
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        renderWishlist();
+      });
+    });
+  }
+  renderWishlist();
+  window.addEventListener("wishlistUpdated", renderWishlist);
+
+  // Dashboard tabs
+  const tabs = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  if (loggedInUser) {
+    const dashboardBox = document.getElementById('dashboardBox');
+    const userNameSpan = document.getElementById('userName');
+    if (dashboardBox) dashboardBox.classList.remove('hidden');
+    if (userNameSpan) userNameSpan.textContent = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+
+    // Orders
+    const ordersList = document.getElementById('ordersList');
+    if (ordersList) {
+      if (!loggedInUser.orders || loggedInUser.orders.length === 0) {
+        ordersList.innerHTML = '<li>No orders yet.</li>';
+      } else {
+        ordersList.innerHTML = '';
+        loggedInUser.orders.forEach(order => {
+          const li = document.createElement('li');
+          li.textContent = `${order.date} — ${order.items} (R${order.total})`;
+          ordersList.appendChild(li);
+        });
+      }
+    }
+
+    // Addresses
+    const addressList = document.getElementById('addressList');
+    if (addressList) {
+      if (!loggedInUser.addresses || loggedInUser.addresses.length === 0) {
+        addressList.innerHTML = '<li>No saved addresses yet.</li>';
+      } else {
+        addressList.innerHTML = '';
+        loggedInUser.addresses.forEach(a => {
+          const li = document.createElement('li');
+          li.textContent = a;
+          addressList.appendChild(li);
+        });
+      }
+    }
+  }
+
+  // Tab switching
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      tabContents.forEach(c => c.classList.add('hidden'));
+      const content = document.getElementById(`${tab.dataset.tab}Tab`);
+      if (content) content.classList.remove('hidden');
+    });
+  });
+
+  // Logout
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('loggedInUser');
+      alert('Logged out successfully');
+      window.location.href = 'login.html';
+    });
+  }
 });

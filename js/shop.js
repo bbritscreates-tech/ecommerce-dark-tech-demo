@@ -1,4 +1,4 @@
-// shop.js - unified, conflict-free version
+// shop.js - full version with cart + wishlist integration
 (function () {
   try {
     console.log("shop.js starting...");
@@ -8,6 +8,7 @@
 
       /* ==================== CART HELPERS ==================== */
       const cartKey = "cart";
+      const wishlistKey = "wishlist";
 
       function getCart() {
         try {
@@ -22,13 +23,24 @@
         window.dispatchEvent(new Event("cartUpdated"));
       }
 
-      if (!localStorage.getItem(cartKey)) {
-        localStorage.setItem(cartKey, JSON.stringify([]));
+      function getWishlist() {
+        try {
+          return JSON.parse(localStorage.getItem(wishlistKey)) || [];
+        } catch {
+          return [];
+        }
       }
+
+      function saveWishlist(list) {
+        localStorage.setItem(wishlistKey, JSON.stringify(list));
+        window.dispatchEvent(new Event("wishlistUpdated"));
+      }
+
+      if (!localStorage.getItem(cartKey)) localStorage.setItem(cartKey, "[]");
+      if (!localStorage.getItem(wishlistKey)) localStorage.setItem(wishlistKey, "[]");
 
       /* ==================== PRODUCTS ==================== */
       const productCards = Array.from(document.querySelectorAll(".product-card"));
-
       productCards.forEach(card => {
         card.dataset.catVisible = "true";
         card.dataset.filterVisible = "true";
@@ -47,19 +59,13 @@
 
         btn.addEventListener("click", () => {
           try {
-            const id =
-              product.dataset.id ||
-              product.querySelector("a")?.getAttribute("href") ||
-              product.querySelector("h3")?.textContent;
-
+            const id = product.dataset.id || product.querySelector("h3")?.textContent || "unknown";
             const name = product.querySelector("h3")?.textContent || "Unnamed";
-            const priceText = product.querySelector("p")?.textContent || "R0";
-            const price = parseFloat(priceText.replace(/[^0-9.-]+/g, "")) || 0;
+            const price = parseFloat((product.dataset.price || "0").replace(/[^0-9.-]+/g, "")) || 0;
             const image = product.querySelector("img")?.src || "";
 
             const cart = getCart();
             const existing = cart.find(i => i.id === id);
-
             if (existing) existing.qty += 1;
             else cart.push({ id, name, price, qty: 1, image });
 
@@ -71,6 +77,41 @@
         });
       });
 
+      /* ==================== ADD TO WISHLIST ==================== */
+      productCards.forEach(product => {
+        // Convert existing heart icons to buttons
+        let heart = product.querySelector(".wishlist-icon");
+        if (heart) {
+          const wishlistBtn = document.createElement("button");
+          wishlistBtn.className = "btn-wishlist";
+          wishlistBtn.innerHTML = "♡ Wishlist";
+          heart.replaceWith(wishlistBtn);
+
+          wishlistBtn.addEventListener("click", () => {
+            const id = product.dataset.id || product.querySelector("h3")?.textContent || "unknown";
+            const name = product.querySelector("h3")?.textContent || "Unnamed";
+            const price = parseFloat((product.dataset.price || "0").replace(/[^0-9.-]+/g, "")) || 0;
+            const image = product.querySelector("img")?.src || "";
+
+            const wishlist = getWishlist();
+            const existing = wishlist.find(i => i.id === id);
+
+            if (existing) {
+              // remove if already in wishlist
+              const newList = wishlist.filter(i => i.id !== id);
+              saveWishlist(newList);
+              wishlistBtn.innerHTML = "♡ Wishlist";
+              wishlistBtn.classList.remove("added");
+            } else {
+              wishlist.push({ id, name, price, image });
+              saveWishlist(wishlist);
+              wishlistBtn.innerHTML = "♥ Wishlisted";
+              wishlistBtn.classList.add("added");
+            }
+          });
+        }
+      });
+
       /* ==================== SIDEBAR CATEGORY FILTER ==================== */
       (function () {
         try {
@@ -80,15 +121,9 @@
           function filterProducts(category) {
             productCards.forEach(card => {
               const cardCat = card.dataset.category || "";
-
-              if (category === "all") {
-                card.dataset.catVisible = "true";
-              } else if (Array.isArray(category)) {
-                card.dataset.catVisible = category.includes(cardCat) ? "true" : "false";
-              } else {
-                card.dataset.catVisible = cardCat === category ? "true" : "false";
-              }
-
+              if (category === "all") card.dataset.catVisible = "true";
+              else if (Array.isArray(category)) card.dataset.catVisible = category.includes(cardCat) ? "true" : "false";
+              else card.dataset.catVisible = cardCat === category ? "true" : "false";
               updateVisibility(card);
             });
           }
@@ -148,7 +183,7 @@
         }
       })();
 
-      /* ==================== PRICE / BRAND FILTERS ==================== */
+      /* ==================== PRICE / BRAND / SCREEN FILTERS ==================== */
       try {
         const applyBtn = document.getElementById("applyFilters");
         const minPrice = document.getElementById("minPrice");
@@ -178,7 +213,6 @@
         }
 
         applyBtn?.addEventListener("click", applyFilters);
-
       } catch (err) {
         console.error("Filter error:", err);
       }
@@ -233,3 +267,4 @@
     console.error("shop.js top-level error:", err);
   }
 })();
+

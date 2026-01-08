@@ -299,6 +299,7 @@ footer {
 .footer-content a {
   font-size: 25px;
   padding-left: 5px;
+  text-decoration: none;
 }
 
 .footer-content a:hover {
@@ -1061,6 +1062,90 @@ footer {
     background: #111;
     border-radius: 12px;
 }
+
+/* ===== ACCOUNT PAGE ===== */
+
+/* Container */
+.account-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Tab Buttons */
+.account-tabs {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.account-tab-btn {
+    padding: 10px 20px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-weight: bold;
+    transition: all 0.3s;
+    outline: none;
+}
+
+.account-tab-btn.active {
+    border-bottom: 2px solid #007BFF;
+    color: #007BFF;
+}
+
+/* Tab Contents */
+.account-tab-content {
+    display: none; /* hide by default */
+    animation: fadeIn 0.3s ease;
+}
+
+.account-tab-content.active {
+    display: block; /* show only active tab */
+}
+
+/* Form Inputs */
+.account-tab-content input,
+.account-tab-content select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.account-tab-content button {
+    padding: 10px 20px;
+    border: none;
+    background: #007BFF;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.account-tab-content button:hover {
+    background: #0056b3;
+}
+
+/* Orders Styling */
+#ordersContainer div {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f7f7f7;
+    border-radius: 5px;
+}
+
+/* Fade Animation */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
 
 
 /* RESPONSIVE */

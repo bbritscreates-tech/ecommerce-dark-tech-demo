@@ -1,27 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SpectraRig | My Account</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account | SpectraRig</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="js/account.js" defer></script>
 </head>
 <body>
-<div class="account-dashboard">
-<h1 id="welcomeUser">Welcome!</h1>
-<div class="account-grid">
-<a href="account-profile.html" class="acc-tile">Profile</a>
-<a href="account-orders.html" class="acc-tile">My Orders</a>
-<a href="wishlist.html" class="acc-tile">Wishlist</a>
-<a href="cart.html" class="acc-tile">Cart</a>
-<a href="recently-viewed.html" class="acc-tile">Recently Viewed</a>
-<a href="account-addresses.html" class="acc-tile">Addresses</a>
-<a href="account-settings.html" class="acc-tile">Settings</a>
-<a href="logout.html" class="acc-tile logout">Logout</a>
-</div>
+
+<div class="account-container">
+
+  <!-- === Tabs Buttons === -->
+  <div class="account-tabs">
+    <button class="account-tab-btn active" data-tab="profileTab">Profile</button>
+    <button class="account-tab-btn" data-tab="ordersTab">Orders</button>
+    <button class="account-tab-btn" data-tab="settingsTab">Settings</button>
+    <button class="account-tab-btn" data-tab="addressesTab">Addresses</button>
+  </div>
+
+  <!-- === Profile Tab === -->
+  <div id="profileTab" class="account-tab-content active">
+    <h3>Your Profile</h3>
+
+    <label for="accountName">Name</label>
+    <input type="text" id="accountName" />
+
+    <label for="accountEmail">Email</label>
+    <input type="email" id="accountEmail" />
+
+    <button id="updateAccountBtn">Update Profile</button>
+  </div>
+
+  <!-- === Orders Tab === -->
+  <div id="ordersTab" class="account-tab-content">
+    <h3>Your Orders</h3>
+    <div id="ordersContainer">
+      <p>No orders have been placed yet.</p>
+    </div>
+  </div>
+
+  <!-- === Settings Tab === -->
+  <div id="settingsTab" class="account-tab-content">
+    <h3>Change Password</h3>
+
+    <label for="oldPassword">Old Password</label>
+    <input type="password" id="oldPassword" />
+
+    <label for="newPassword">New Password</label>
+    <input type="password" id="newPassword" />
+
+    <button id="changePasswordBtn">Change Password</button>
+
+    <hr />
+
+    <button id="logoutBtn">Log Out</button>
+    <button id="deleteAccountBtn" class="danger">Delete Account</button>
+  </div>
+
+  <!-- === Addresses Tab === -->
+  <div id="addressesTab" class="account-tab-content">
+    <h3>Your Addresses</h3>
+
+    <label for="addressSelect">Saved Addresses</label>
+    <select id="addressSelect">
+      <option value="" disabled selected>Select an address</option>
+    </select>
+
+    <label for="newAddress">Add New Address</label>
+    <input type="text" id="newAddress" />
+
+    <button id="addAddressBtn">Add Address</button>
+  </div>
+
 </div>
 
-
-<script src="auth.js"></script>
 </body>
 </html>
