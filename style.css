@@ -1161,6 +1161,38 @@ footer {
     to {opacity: 1;}
 }
 
+.auth-container {
+  background: #4a4a4a;
+  padding: 40px 0;
+}
+.reg-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #6a6a6a;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+.reg-container h2 {
+  color: #7b00ff;
+  padding-bottom: 15px;
+}
+
+.reg-container input,
+.reg-container select {
+    width: 100%;
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.reg-container p {
+  padding-top: 15px;
+}
+
 
 
 /* RESPONSIVE */
