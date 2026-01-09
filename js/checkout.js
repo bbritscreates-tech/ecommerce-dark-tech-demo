@@ -1,211 +1,193 @@
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("checkout.js loaded");
-
-  // ===== AUTH CHECK =====
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+document.addEventListener('DOMContentLoaded', () => {
+  // ======= USER CHECK =======
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
   if (!currentUser) {
-    alert("Please log in first!");
-    window.location.href = "login.html";
+    alert('Please log in first!');
+    window.location.href = 'login.html';
     return;
   }
 
-  // ===== CONSTANTS =====
-  const DELIVERY_FEE = 100;
-  const FREE_DELIVERY_THRESHOLD = 2000;
+  // ======= ELEMENTS =======
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const phoneInput = document.getElementById('phone');
+  const checkoutItems = document.getElementById('checkout-items');
+  const summarySubtotal = document.getElementById('summary-subtotal');
+  const summaryDelivery = document.getElementById('summary-delivery');
+  const summaryTotal = document.getElementById('summary-total');
+  const checkoutForm = document.getElementById('checkoutForm');
+  const checkoutAddress = document.getElementById('checkoutAddress');
+  const addNewAddressBtn = document.getElementById('addNewAddressBtn');
+  const newAddressForm = document.getElementById('newAddressForm');
+  const addressLine1 = document.getElementById('addressLine1');
+  const addressLine2 = document.getElementById('addressLine2');
+  const city = document.getElementById('city');
+  const postalCode = document.getElementById('postalCode');
+  const saveAddressBtn = document.getElementById('saveAddressBtn');
+  const paymentRadios = document.querySelectorAll('input[name="payment"]');
 
-  // ===== ELEMENTS =====
-  const checkoutItems = document.getElementById("checkout-items");
-  const subtotalEl = document.getElementById("summary-subtotal");
-  const deliveryEl = document.getElementById("summary-delivery");
-  const totalEl = document.getElementById("summary-total");
-  const deliveryNotice = document.getElementById("delivery-notice");
+  // Fill name and email
+  if (nameInput) nameInput.value = currentUser.name;
+  if (emailInput) emailInput.value = currentUser.email;
 
-  const nameInput = document.getElementById("name");
-  const emailInput = document.getElementById("email");
-  const phoneInput = document.getElementById("phone");
+  // ======= CART =======
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-  const checkoutAddress = document.getElementById("checkoutAddress");
-  const addNewAddressBtn = document.getElementById("addNewAddressBtn");
-  const newAddressForm = document.getElementById("newAddressForm");
-  const saveAddressBtn = document.getElementById("saveAddressBtn");
+  function calculateTotals() {
+    let subtotal = 0;
+    cart.forEach(item => {
+      subtotal += item.price * item.qty;
+    });
 
-  const addressLine1 = document.getElementById("addressLine1");
-  const addressLine2 = document.getElementById("addressLine2");
-  const city = document.getElementById("city");
-  const postalCode = document.getElementById("postalCode");
+    // Delivery fee: free if subtotal >= 5000
+    const delivery = subtotal > 0 && subtotal < 5000 ? 100 : 0;
+    const total = subtotal + delivery;
 
-  const checkoutForm = document.getElementById("checkoutForm");
+    summarySubtotal.textContent = `R${subtotal.toFixed(2)}`;
+    summaryDelivery.textContent = `R${delivery.toFixed(2)}`;
+    summaryTotal.textContent = `R${total.toFixed(2)}`;
 
-  // ===== PREFILL USER INFO =====
-  if (nameInput) nameInput.value = currentUser.name || "";
-  if (emailInput) emailInput.value = currentUser.email || "";
-
-  // ===== LOAD CART =====
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  function getQuantity(item) {
-    return Number(item.quantity ?? item.qty ?? item.count ?? 1);
+    return { subtotal, delivery, total };
   }
 
-  function getPrice(item) {
-    if (typeof item.price === "string") {
-      return Number(item.price.replace("R", ""));
-    }
-    return Number(item.price ?? item.cost ?? 0);
-  }
-
-  function renderCartItems() {
+  function renderCart() {
     if (!checkoutItems) return;
 
     if (cart.length === 0) {
-      checkoutItems.innerHTML = "<p>Your cart is empty.</p>";
+      checkoutItems.innerHTML = '<p>Your cart is empty.</p>';
+      summarySubtotal.textContent = 'R0.00';
+      summaryDelivery.textContent = 'R0.00';
+      summaryTotal.textContent = 'R0.00';
       return;
     }
 
-    checkoutItems.innerHTML = "";
-    cart.forEach(item => {
-      const qty = getQuantity(item);
-      const price = getPrice(item);
-      const total = price * qty;
+    checkoutItems.innerHTML = cart.map(item => {
+      return `<div class="checkout-item">
+                <p>${item.name} — Quantity: ${item.qty} — Price: R${(item.price * item.qty).toFixed(2)}</p>
+              </div>`;
+    }).join('');
 
-      checkoutItems.innerHTML += `
-        <div class="checkout-item">
-          <p><strong>${item.name}</strong></p>
-          <p>Quantity: ${qty}</p>
-          <p>Price: R${total.toFixed(2)}</p>
-        </div>
-      `;
-    });
+    calculateTotals();
   }
 
-  // ===== TOTALS =====
-  function calculateTotals() {
-    let subtotal = 0;
+  renderCart();
 
-    cart.forEach(item => {
-      subtotal += getPrice(item) * getQuantity(item);
-    });
-
-    const delivery = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
-    const total = subtotal + delivery;
-
-    subtotalEl.textContent = `R${subtotal.toFixed(2)}`;
-    deliveryEl.textContent = delivery === 0 ? "FREE" : `R${delivery.toFixed(2)}`;
-    totalEl.textContent = `R${total.toFixed(2)}`;
-
-    deliveryNotice.textContent =
-      delivery === 0
-        ? "🎉 You qualify for FREE delivery!"
-        : `Spend R${(FREE_DELIVERY_THRESHOLD - subtotal).toFixed(
-            2
-          )} more for FREE delivery`;
-  }
-
-  // ===== ADDRESSES =====
+  // ======= ADDRESSES =======
   function loadAddresses() {
-    checkoutAddress.innerHTML = "";
+    if (!checkoutAddress) return;
 
-    const addresses = currentUser.addresses || [];
-    if (addresses.length === 0) {
-      checkoutAddress.innerHTML =
-        '<option disabled selected>No saved addresses</option>';
-      return;
-    }
+    checkoutAddress.innerHTML = '<option value="" disabled selected>Select an address</option>';
+    currentUser.addresses = currentUser.addresses || [];
 
-    addresses.forEach(addr => {
-      const opt = document.createElement("option");
-      opt.value = addr;
-      opt.textContent = addr;
+    currentUser.addresses.forEach((addr, index) => {
+      const opt = document.createElement('option');
+      opt.value = index;
+      opt.textContent = `${addr.line1}${addr.line2 ? ', ' + addr.line2 : ''}, ${addr.city} ${addr.postal}`;
       checkoutAddress.appendChild(opt);
     });
   }
 
-  addNewAddressBtn.addEventListener("click", () => {
-    newAddressForm.style.display =
-      newAddressForm.style.display === "none" ? "block" : "none";
+  loadAddresses();
+
+  addNewAddressBtn.addEventListener('click', () => {
+    newAddressForm.style.display = 'block';
   });
 
-  saveAddressBtn.addEventListener("click", () => {
-    if (!addressLine1.value || !city.value || !postalCode.value) {
-      alert("Please fill in required address fields.");
+  saveAddressBtn.addEventListener('click', () => {
+    const newAddr = {
+      line1: addressLine1.value.trim(),
+      line2: addressLine2.value.trim(),
+      city: city.value.trim(),
+      postal: postalCode.value.trim(),
+    };
+
+    if (!newAddr.line1 || !newAddr.city || !newAddr.postal) {
+      alert('Please fill in all required address fields.');
       return;
     }
 
-    const fullAddress = `${addressLine1.value}, ${
-      addressLine2.value ? addressLine2.value + ", " : ""
-    }${city.value}, ${postalCode.value}`;
+    currentUser.addresses.push(newAddr);
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-    currentUser.addresses = currentUser.addresses || [];
-    currentUser.addresses.push(fullAddress);
-
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    // Clear form
+    addressLine1.value = '';
+    addressLine2.value = '';
+    city.value = '';
+    postalCode.value = '';
+    newAddressForm.style.display = 'none';
 
     loadAddresses();
-    newAddressForm.style.display = "none";
-
-    addressLine1.value = "";
-    addressLine2.value = "";
-    city.value = "";
-    postalCode.value = "";
-
-    alert("Address added successfully!");
+    alert('Address added!');
   });
 
-  // ===== PAYMENT HIGHLIGHT =====
-  document.querySelectorAll('input[name="payment"]').forEach(radio => {
-    radio.addEventListener("change", () => {
-      document
-        .querySelectorAll(".payment-options label")
-        .forEach(l => l.classList.remove("active"));
-      radio.parentElement.classList.add("active");
+  function getSelectedAddress() {
+    if (!checkoutAddress) return null;
+    const selectedIndex = checkoutAddress.value;
+    if (selectedIndex === "" || selectedIndex === null) return null;
+    return currentUser.addresses[selectedIndex];
+  }
+
+  // ======= PAYMENT =======
+  // Keep selection highlighted
+  paymentRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      paymentRadios.forEach(r => r.parentElement.classList.remove('selected'));
+      if (radio.checked) radio.parentElement.classList.add('selected');
     });
+    // Maintain previous selection on reload
+    if (radio.value === localStorage.getItem('lastPayment')) {
+      radio.checked = true;
+      radio.parentElement.classList.add('selected');
+    }
   });
 
-  // ===== SUBMIT ORDER =====
-  checkoutForm.addEventListener("submit", e => {
+  // ======= SUBMIT ORDER =======
+  checkoutForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     if (!cart.length) {
-      alert("Your cart is empty.");
+      alert('Your cart is empty!');
       return;
     }
 
-    const payment = document.querySelector(
-      'input[name="payment"]:checked'
-    )?.value;
-
+    const payment = document.querySelector('input[name="payment"]:checked')?.value;
     if (!payment) {
-      alert("Please select a payment method.");
+      alert('Please select a payment method');
       return;
     }
 
-    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+    const address = getSelectedAddress();
+    if (!address) {
+      alert('Please select a delivery address');
+      return;
+    }
 
-    const order = {
-      id: "ORD" + Date.now(),
-      email: currentUser.email,
+    const totals = calculateTotals();
+
+    // Save order
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const newOrder = {
+      id: 'ORD' + Date.now(),
+      userEmail: currentUser.email,
       items: cart,
-      total: totalEl.textContent,
+      total: totals.total,
+      delivery: totals.delivery,
+      subtotal: totals.subtotal,
+      address,
       date: new Date().toLocaleString(),
       payment,
-      address: checkoutAddress.value
     };
+    orders.push(newOrder);
+    localStorage.setItem('orders', JSON.stringify(orders));
 
-    orders.push(order);
-    localStorage.setItem("orders", JSON.stringify(orders));
+    // Save last payment
+    localStorage.setItem('lastPayment', payment);
 
-    currentUser.orders = currentUser.orders || [];
-    currentUser.orders.push(order);
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    // Clear cart
+    cart = [];
+    localStorage.setItem('cart', JSON.stringify(cart));
 
-    localStorage.setItem("cart", JSON.stringify([]));
-
-    alert("Order placed successfully!");
-    window.location.href = "account.html";
+    alert('Order placed successfully!');
+    window.location.href = 'account.html';
   });
-
-  // ===== INIT =====
-  renderCartItems();
-  calculateTotals();
-  loadAddresses();
 });
