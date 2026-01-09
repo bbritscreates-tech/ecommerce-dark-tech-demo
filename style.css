@@ -1066,11 +1066,15 @@ footer {
 /* ===== ACCOUNT PAGE ===== */
 
 /* Container */
+.account-main {
+  background: #4a4a4a;
+  padding: 40px 0;
+}
 .account-container {
     max-width: 900px;
-    margin: 40px auto;
+    margin: 0 auto;
     padding: 20px;
-    background: #fff;
+    background: #6a6a6a;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     font-family: Arial, sans-serif;
@@ -1081,6 +1085,7 @@ footer {
     display: flex;
     border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .account-tab-btn {
@@ -1092,11 +1097,12 @@ footer {
     font-weight: bold;
     transition: all 0.3s;
     outline: none;
+    font-size: 18px;
 }
 
 .account-tab-btn.active {
-    border-bottom: 2px solid #007BFF;
-    color: #007BFF;
+    border-bottom: 2px solid #7b00ff;
+    color: #7b00ff;
 }
 
 /* Tab Contents */
@@ -1110,26 +1116,35 @@ footer {
 }
 
 /* Form Inputs */
+.account-tab-content h3 {
+  color: #7b00ff;
+  font-size: 20px;
+  padding-bottom: 10px;
+}
+
 .account-tab-content input,
 .account-tab-content select {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin: 15px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-.account-tab-content button {
-    padding: 10px 20px;
-    border: none;
-    background: #007BFF;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
+.red-btn {
+  background-color: red;
 }
 
-.account-tab-content button:hover {
-    background: #0056b3;
+.red-btn:hover {
+  background-color: #ec3c3c;
+}
+
+.account-tab-content #changePasswordBtn {
+  margin-bottom: 15px;
+}
+
+.account-tab-content #logoutBtn, .account-tab-content #deleteAccountBtn {
+  margin-top: 15px;
 }
 
 /* Orders Styling */

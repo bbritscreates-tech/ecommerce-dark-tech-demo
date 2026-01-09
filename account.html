@@ -1,79 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Account | SpectraRig</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="js/account.js" defer></script>
 </head>
+
 <body>
+  <header>
+    <section class="navbar-1">
+      <div class="nav-logo">
+        <a href="index.html">
+          <img src="images/logo/spectarig_logo-removebg-preview.png" alt="SpectraRig Logo" />
+        </a>
+      </div>
+      <div class="mobile-top-menu">
+        <button id="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+        <ul id="mobile-dropdown-menu" class="mobile-dropdown">
+          <li class="mobile-menu-item"><a href="shop.html">Shop</a></li>
+          <li class="mobile-menu-item">
+            Laptops & Notebooks
+            <i class="fa-solid fa-chevron-down arrow"></i>
+            <ul class="mobile-submenu">
+              <li><a href="#">Gaming Laptops on Special</a></li>
+              <li><a href="">Laptops on Special</a></li>
+              <li><a href="#">All Laptops</a></li>
+            </ul>
+          </li>
+          <li class="mobile-menu-item">
+            Gaming Chairs
+            <i class="fa-solid fa-chevron-down arrow"></i>
+            <ul class="mobile-submenu">
+              <li><a href="#">Gaming Chair Under R4000</a></li>
+              <li><a href="#">Gaming Chairs Above R4000</a></li>
+              <li><a href="#">Gaming Chairs on Special</a></li>
+              <li><a href="#">All Gaming Chairs</a></li>
+            </ul>
+          </li>
+          <li class="mobile-menu-item">
+            Monitors
+            <i class="fa-solid fa-chevron-down arrow"></i>
+            <ul class="mobile-submenu">
+              <li><a href="#">Monitors on Special</a></li>
+              <li><a href="#">All Monitors</a></li>
+            </ul>
+          </li>
+          <li class="mobile-menu-item">
+            Accessories
+            <i class="fa-solid fa-chevron-down arrow"></i>
+            <ul class="mobile-submenu">
+              <li><a href="#">Mouse</a></li>
+              <li><a href="#">Keyboards</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="account-cart">
+        <a href="account.html" class="border-right" id="accountLink">
+          <i class="fa-solid fa-user"></i>
+        </a>
+        <a href="login.html" class="border-right">Sign In</a>
+        <a href="register.html" class="border-right">Register</a>
+        <a href="cart.html">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span class="cart-count cart-updated" id="cartCount">0</span>
+        </a>
+      </div>
+    </section>
+    <section class="navbar-section">
+      <div class="menu">
+        <button id="menu-btn"><i class="fa-solid fa-bars"></i> Menu</button>
+        <div id="overlay"></div>
 
-<div class="account-container">
+        <div id="dropdown-menu">
+          <ul class="main-menu">
+            <li class="menu-item"><i class="fa-solid fa-cart-shopping"></i><a href="shop.html">Shop</a></li>
+            <li class="menu-item" data-sub="laptops">
+              <i class="fa-solid fa-laptop"></i> Laptops & Notebooks
+            </li>
+            <li class="menu-item" data-sub="chairs">
+              <i class="fa-solid fa-gamepad"></i> Gaming Chairs
+            </li>
+            <li class="menu-item" data-sub="monitors">
+              <i class="fa-solid fa-desktop"></i> Monitors
+            </li>
+            <li class="menu-item" data-sub="accessories">
+              <i class="fa-solid fa-headphones"></i> Accessories
+            </li>
+          </ul>
+        </div>
 
-  <!-- === Tabs Buttons === -->
-  <div class="account-tabs">
-    <button class="account-tab-btn active" data-tab="profileTab">Profile</button>
-    <button class="account-tab-btn" data-tab="ordersTab">Orders</button>
-    <button class="account-tab-btn" data-tab="settingsTab">Settings</button>
-    <button class="account-tab-btn" data-tab="addressesTab">Addresses</button>
-  </div>
+        <div class="submenu-container">
+          <!-- LAPTOPS -->
+          <div class="submenu" id="laptops">
+            <div class="submenu-grid">
+              <div class="submenu-card">
+                <h4>Laptops On Special</h4>
+                <a href="#">Gaming Laptops on Special</a>
+                <a href="#">All Laptops</a>
+              </div>
+              <div class="submenu-card">
+                <h4>Gaming Laptops</h4>
+                <a href="#">All Gaming Laptops</a>
+              </div>
+            </div>
+          </div>
 
-  <!-- === Profile Tab === -->
-  <div id="profileTab" class="account-tab-content active">
-    <h3>Your Profile</h3>
+          <!-- CHAIRS -->
+          <div class="submenu" id="chairs">
+            <div class="submenu-grid">
+              <div class="submenu-card">
+                <h4>Gaming Chair Deals</h4>
+                <a href="#">Gaming Chair Under R4000</a>
+                <a href="#">Gaming Chairs Above R4000</a>
+                <a href="#">Gaming Chairs on Special</a>
+                <a href="#">All Gaming Chairs</a>
+              </div>
+            </div>
+          </div>
 
-    <label for="accountName">Name</label>
-    <input type="text" id="accountName" />
+          <!-- Monitors -->
+          <div class="submenu" id="monitors">
+            <div class="submenu-grid">
+              <div class="submenu-card">
+                <h4>Monitor Deals</h4>
+                <a href="#">Monitors on Special</a>
+                <a href="#">All Special</a>
+              </div>
+            </div>
+          </div>
 
-    <label for="accountEmail">Email</label>
-    <input type="email" id="accountEmail" />
+          <!-- ACCESSORIES -->
+          <div class="submenu" id="accessories">
+            <div class="submenu-grid">
+              <div class="submenu-card">
+                <h4>Peripherals</h4>
+                <a href="#">Mouse</a>
+                <a href="#">Keyboards</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <form class="search-bar">
+          <input type="text" placeholder="Search products..." />
+          <button type="submit">
+            <i class="fa fa-search"></i>
+          </button>
+        </form>
+      </div>
+      <div class="nav2-links">
+        <a href="">Laptops on Special</a>
+        <a href="">Trending</a>
+        <a href="">New Arrivals</a>
+        <a href="">Clearance</a>
+      </div>
+    </section>
 
-    <button id="updateAccountBtn">Update Profile</button>
-  </div>
-
-  <!-- === Orders Tab === -->
-  <div id="ordersTab" class="account-tab-content">
-    <h3>Your Orders</h3>
-    <div id="ordersContainer">
-      <p>No orders have been placed yet.</p>
+    <!-- === MOBILE BOTTOM NAV (ACCOUNT + CART) === -->
+    <div class="mobile-bottom-nav">
+      <a href="account.html">
+        <i class="fa-solid fa-user"></i>
+        <span>Account</span>
+      </a>
+      <a href="cart.html">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Cart</span>
+      </a>
     </div>
-  </div>
+  </header>
+  <main class="account-main">
+    <div class="account-container">
 
-  <!-- === Settings Tab === -->
-  <div id="settingsTab" class="account-tab-content">
-    <h3>Change Password</h3>
+      <!-- === Tabs Buttons === -->
+      <div class="account-tabs">
+        <button class="account-tab-btn active" data-tab="profileTab">Profile</button>
+        <button class="account-tab-btn" data-tab="ordersTab">Orders</button>
+        <button class="account-tab-btn" data-tab="addressesTab">Addresses</button>
+        <button class="account-tab-btn" data-tab="settingsTab">Settings</button>
+      </div>
 
-    <label for="oldPassword">Old Password</label>
-    <input type="password" id="oldPassword" />
+      <!-- === Profile Tab === -->
+      <div id="profileTab" class="account-tab-content active">
+        <h3>Your Profile</h3>
 
-    <label for="newPassword">New Password</label>
-    <input type="password" id="newPassword" />
+        <label for="accountName">Name</label>
+        <input type="text" id="accountName" />
 
-    <button id="changePasswordBtn">Change Password</button>
+        <label for="accountEmail">Email</label>
+        <input type="email" id="accountEmail" />
 
-    <hr />
+        <button class="btn-primary" id="updateAccountBtn">Update Profile</button>
+      </div>
 
-    <button id="logoutBtn">Log Out</button>
-    <button id="deleteAccountBtn" class="danger">Delete Account</button>
-  </div>
+      <!-- === Orders Tab === -->
+      <div id="ordersTab" class="account-tab-content">
+        <h3>Your Orders</h3>
+        <div id="ordersContainer">
+          <p>No orders have been placed yet.</p>
+        </div>
+      </div>
 
-  <!-- === Addresses Tab === -->
-  <div id="addressesTab" class="account-tab-content">
-    <h3>Your Addresses</h3>
 
-    <label for="addressSelect">Saved Addresses</label>
-    <select id="addressSelect">
-      <option value="" disabled selected>Select an address</option>
-    </select>
+      <!-- === Addresses Tab === -->
+      <div id="addressesTab" class="account-tab-content">
+        <h3>Your Addresses</h3>
 
-    <label for="newAddress">Add New Address</label>
-    <input type="text" id="newAddress" />
+        <label for="addressSelect">Saved Addresses</label>
+        <select id="addressSelect">
+          <option value="" disabled selected>Select an address</option>
+        </select>
 
-    <button id="addAddressBtn">Add Address</button>
-  </div>
+        <label for="newAddress">Add New Address</label>
+        <input type="text" id="newAddress" />
 
-</div>
+        <button class="btn-primary" id="addAddressBtn">Add Address</button>
+      </div>
+
+      <!-- === Settings Tab === -->
+      <div id="settingsTab" class="account-tab-content">
+        <h3>Change Password</h3>
+
+        <label for="oldPassword">Old Password</label>
+        <input type="password" id="oldPassword" />
+
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" />
+
+        <button class="btn-primary" id="changePasswordBtn">Change Password</button>
+
+        <hr />
+
+        <button class="btn-primary" id="logoutBtn">Log Out</button>
+        <button class="btn-primary red-btn"id="deleteAccountBtn" class="danger">Delete Account</button>
+      </div>
+
+    </div>
+  </main>
+  <footer>
+    <div class="footer-container">
+      <div class="footer-content">
+        <h3>Opening Times</h3>
+        <p>Monday - Friday 9AM - 4PM</p>
+        <p>Saturday 9AM - 12PM</p>
+        <p>Sunday Closed</p>
+        <p>Public Holidays 9AM - 12PM</p>
+      </div>
+      <div class="footer-content">
+        <h3>Join Our Community</h3>
+        <a href="">
+          <i class="fa-brands fa-facebook"></i>
+        </a>
+        <a href="">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a href="">
+          <i class="fa-brands fa-twitter"></i>
+        </a>
+        <a href="">
+          <i class="fa-brands fa-linkedin"></i>
+        </a>
+        <a href="">
+          <i class="fa-brands fa-youtube"></i>
+        </a>
+      </div>
+      <div class="footer-content">
+        <div class="contact">
+          <h3>Contact Us</h3>
+          <a href="">
+            <i class="fa-solid fa-phone"></i> 012 345 6789
+          </a><br>
+          <a href="">
+            <i class="fa-solid fa-envelope"></i> info@spectrarig.com
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; Copyright All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/mobile-top-nav.js"></script>
+
 
 </body>
+
 </html>
