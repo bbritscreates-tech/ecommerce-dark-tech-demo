@@ -54,7 +54,7 @@
 
                     <select id="checkoutAddress" required></select>
 
-                    <button type="button" id="addNewAddressBtn">+ Add New Address</button>
+                    <button class="btn-primary" type="button" id="addNewAddressBtn">+ Add New Address</button>
                     <div id="newAddressForm" style="display:none;">
                         <input type="text" id="addressLine1" placeholder="Address Line 1" />
                         <input type="text" id="addressLine2" placeholder="Address Line 2 (Optional)" />
@@ -67,12 +67,12 @@
 
                     <h3 class="payment-head">Payment Method</h3>
                     <div class="payment-options">
-                        <label><input type="radio" name="payment" value="Card" required /> Card</label>
-                        <label><input type="radio" name="payment" value="EFT" /> EFT</label>
-                        <label><input type="radio" name="payment" value="Cash on Delivery" /> Cash on Delivery</label>
+                        <label class="payment-option"><input type="radio" name="payment" value="Card" required /> Card</label>
+                        <label class="payment-option"><input type="radio" name="payment" value="EFT" /> EFT</label>
+                        <label class="payment-option"><input type="radio" name="payment" value="Cash on Delivery" /> Cash on Delivery</label>
                     </div>
 
-                    <button type="submit" class="btn-primary mobile-btn">Place Order</button>
+                    <button type="submit" class="btn-primary mobile-btn btn-mid">Place Order</button>
                 </form>
             </div>
         </section>
